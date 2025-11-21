@@ -62,7 +62,7 @@ public class PedidosDAOImpl extends AbstractDAOImpl implements PedidosDAO {
             ps.executeUpdate();
 
             ResultSet rsGenKeys = ps.getGeneratedKeys();
-            //if (rsGenKeys.next()) pedido.setIdUsuario(rsGenKeys.getInt(1));
+            if (rsGenKeys.next()) pedido.setId_pedido(rsGenKeys.getInt(1));
 
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -74,6 +74,33 @@ public class PedidosDAOImpl extends AbstractDAOImpl implements PedidosDAO {
 
     @Override
     public synchronized void update(Pedido pedido) {
+
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = connectDB();
+
+            ps = conn.prepareStatement("UPDATE pedidos SET estado = ?,total = ?  WHERE id_pedido = ?");
+            int idx = 1;
+            ps.setString(idx++, pedido.getEstado());
+            ps.setDouble(idx++, pedido.getTotal());
+            ps.setInt(idx, pedido.getId_pedido());
+
+            int rows = ps.executeUpdate();
+
+            if (rows == 0)
+                System.out.println("Update de pedido con 0 registros actualizados.");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            closeDb(conn, ps, rs);
+        }
+
     }
     @Override
     public synchronized void delete(int idPedido) {

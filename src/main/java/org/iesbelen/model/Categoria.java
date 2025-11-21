@@ -1,6 +1,6 @@
 package org.iesbelen.model;
 
-public class Categorias {
+public class Categoria {
 
     public int id_categoria;
     public String nombre;
@@ -15,7 +15,6 @@ public class Categorias {
     public String getDescripcion() {
         return descripcion;
     }
-
     public void setId_categoria(int id_categoria) {
         this.id_categoria = id_categoria;
     }
