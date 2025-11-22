@@ -1,0 +1,19 @@
+<%@ page import="org.iesbelen.model.Usuario" %>
+<nav class="menu">
+    <a href="<%=application.getContextPath()%>/index.jsp">HOME</a>
+    <%--<a href="<%=application.getContextPath()%>/tienda/fabricantes">Frabricantes</a>--%>
+    <a href="<%=application.getContextPath()%>/tienda/productos">Producto</a>
+    <%--<a href="<%=application.getContextPath()%>/tienda/usuarios">Usuarios</a>--%>
+   <%-- <div class="menu-log">
+        <a href="<%=application.getContextPath()%>/login">LOGIN</a>
+    </div>--%>
+    <%--<div class="menu-log">
+        <% if (session.getAttribute("usuario-logado") != null) {
+            Usuario usuario = (Usuario) session.getAttribute("usuario-logado"); %>
+        <p>Hola, <%=usuario.getUsuario() %></p>
+        <a href="${pageContext.request.contextPath}/tienda/usuarios/logout">LOGOUT</a> <% } else { %>
+        <a href="${pageContext.request.contextPath}/tienda/usuarios/login">LOGIN</a> <% } %>
+
+    </div>--%>
+</nav>
+

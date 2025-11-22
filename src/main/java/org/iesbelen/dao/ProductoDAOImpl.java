@@ -17,12 +17,6 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
 
         try {
             conn = connectDB();
-
-
-            //1 alternativas comentadas:
-            //ps = conn.prepareStatement("INSERT INTO fabricantes (nombre) VALUES (?)", new String[] {"codigo"});
-            //Ver también, AbstractDAOImpl.executeInsert ...
-            //Columna fabricante.codigo es clave primaria auto_increment, por ese motivo se omite de la sentencia SQL INSERT siguiente.
             ps = conn.prepareStatement("INSERT INTO productos (nombre,descripcion,precio,stock,id_categoria,talla,color) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
 
             int idx = 1;
@@ -145,11 +139,15 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
         try {
             conn = connectDB();
 
-            ps = conn.prepareStatement("UPDATE productos SET nombre = ?,precio = ?  WHERE id_Producto = ?");
+            ps = conn.prepareStatement("UPDATE productos SET nombre = ?,precio = ?,stock = ?,talla = ?,color= ?  WHERE id_Producto = ?");
             int idx = 1;
             ps.setString(idx++, producto.getNombre());
             ps.setDouble(idx++, producto.getPrecio());
+            ps.setInt(idx++, producto.getStock());
+            ps.setString(idx++, producto.getTalla());
+            ps.setString(idx++, producto.getColor());
             ps.setInt(idx, producto.getId_producto());
+
 
             int rows = ps.executeUpdate();
 
