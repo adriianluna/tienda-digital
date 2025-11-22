@@ -86,6 +86,7 @@
             <div style="float: left;width: 50%">
                 <label>Categoria</label>
             </div>
+
             <div style="float: none;width: auto;overflow: hidden;">
                 <input  name="categoria" value="<%= prod.getId_categoria() %>" readonly="readonly"/>
             </div>
