@@ -122,18 +122,37 @@ public class UsuariosServlet extends HttpServlet {
         try {
             //Cambiar creo que solo hay q poner los metoso para el upodate puse de mas
             int id = Integer.parseInt(request.getParameter("id_usuario"));
+            Usuario usuarioExistente = usuarioDAO.find(id).orElseThrow();
             Usuario usuario = new Usuario();
             usuario.setId_usuario(id);
             // producto.setId_producto(Integer.parseInt(request.getParameter("id_producto")));
             usuario.setNombre(request.getParameter("nombre"));
             usuario.setEmail(request.getParameter("email"));
-            try {
+           /* try {
                 String hash = Utilidades.hashPassword(request.getParameter("password"));
                 usuario.setPassword(hash);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
-            }
+            }*/
             //usuario.setPassword(request.getParameter("password"));
+
+            String nuevaPassword = request.getParameter("password");
+            if (nuevaPassword != null && !nuevaPassword.isBlank()) {
+                // Compara con la contraseña existente
+                if (!nuevaPassword.equals(usuarioExistente.getPassword())) {
+                    try {
+                        usuario.setPassword(Utilidades.hashPassword(nuevaPassword));
+                    } catch (NoSuchAlgorithmException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    // Si es la misma que ya estaba, no cambiamos
+                    usuario.setPassword(usuarioExistente.getPassword());
+                }
+            } else {
+                // Si no se escribe nada, dejamos la contraseña actual
+                usuario.setPassword(usuarioExistente.getPassword());
+            }
             usuario.setRol(request.getParameter("rol"));
             usuarioDAO.update(usuario);
 
