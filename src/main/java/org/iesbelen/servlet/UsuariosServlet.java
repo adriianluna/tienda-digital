@@ -127,7 +127,13 @@ public class UsuariosServlet extends HttpServlet {
             // producto.setId_producto(Integer.parseInt(request.getParameter("id_producto")));
             usuario.setNombre(request.getParameter("nombre"));
             usuario.setEmail(request.getParameter("email"));
-            usuario.setPassword(request.getParameter("password"));
+            try {
+                String hash = Utilidades.hashPassword(request.getParameter("password"));
+                usuario.setPassword(hash);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
+            //usuario.setPassword(request.getParameter("password"));
             usuario.setRol(request.getParameter("rol"));
             usuarioDAO.update(usuario);
 
