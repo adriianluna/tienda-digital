@@ -19,7 +19,7 @@ public class PedidosDAOImpl extends AbstractDAOImpl implements PedidosDAO {
         try {
             conn = connectDB();
             s = conn.createStatement();
-            rs = s.executeQuery("SELECT * FROM pedidos");
+            rs = s.executeQuery("SELECT * FROM pedidos ");
 
             while (rs.next()) {
                 Pedido pedido = new Pedido();

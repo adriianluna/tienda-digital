@@ -5,6 +5,7 @@
     <a href="<%=application.getContextPath()%>/tienda/usuarios">Usuario</a>
     <a href="<%=application.getContextPath()%>/tienda/productos">Producto</a>
     <a href="<%=application.getContextPath()%>/tienda/pedidos">Pedidos</a>
+    <a href="<%=application.getContextPath()%>/tienda/detalle-pedido">Detalle pedidos</a>
     <%--<a href="<%=application.getContextPath()%>/tienda/usuarios">Usuarios</a>--%>
    <%-- <div class="menu-log">
         <a href="<%=application.getContextPath()%>/login">LOGIN</a>

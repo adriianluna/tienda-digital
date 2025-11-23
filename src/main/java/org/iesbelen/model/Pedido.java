@@ -8,6 +8,7 @@ public class Pedido {
     public String estado;
     public double total;
 
+
     public void setId_pedido(int id_pedido) {
         this.id_pedido = id_pedido;
     }

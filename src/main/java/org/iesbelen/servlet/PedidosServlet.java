@@ -7,7 +7,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.iesbelen.dao.*;
+import org.iesbelen.model.Pedido;
 import org.iesbelen.model.Producto;
+import org.iesbelen.model.Usuario;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,24 +25,24 @@ public class PedidosServlet extends HttpServlet {
 
 
         if (pathInfo == null || "/".equals(pathInfo)) {
-            ProductoDAO productoDao = new ProductoDAOImpl();
-            List<Producto> listaProducto = productoDao.getAll();
+            PedidosDAO pedidosDAO= new PedidosDAOImpl();
+            List<Pedido> listaPedido = pedidosDAO.getAll();
 
-            request.setAttribute("listaProducto", listaProducto);
-            dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
+            request.setAttribute("listaPedido", listaPedido);
+            dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
 
         } else {
             pathInfo = pathInfo.replaceAll("/$", "");
             String[] pathParts = pathInfo.split("/");
 
             if (pathParts.length == 2 && "crear".equals(pathParts[1])) {
-                //Para mostrar datos en el select de categorias al crear producto
-                CategoriasDAO catDAO = new CategoriasDAOImpl();
-                request.setAttribute("listaCategoria", catDAO.getAll());
+              //Para poder seleccionar el usuario al crearlo
+                UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
+                List<Usuario> listaUsuarios = usuarioDAO.getAll();
+                request.setAttribute("listaUsuarios", listaUsuarios);
+                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/crear-pedido.jsp");
 
-                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/crear-pedido.jsp");
-
-            }else if(pathParts.length == 2 ){
+            }/*else if(pathParts.length == 2 ){
                 ProductoDAO productoDAO = new ProductoDAOImpl();
 
                 try {
@@ -52,22 +54,22 @@ public class PedidosServlet extends HttpServlet {
                     nfe.printStackTrace();
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
                 }
-            }
+            }*/
 
             else if (pathParts.length == 3 && "editar".equals(pathParts[1])) {
                 ProductoDAO productoDAO = new ProductoDAOImpl();
                 try {
-                    request.setAttribute("producto",
+                    request.setAttribute("pedido",
                             productoDAO.find(Integer.parseInt(pathParts[2])).orElse(null));
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/editar-producto.jsp");
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/editar-pedido.jsp");
 
                 } catch (NumberFormatException nfe) {
                     nfe.printStackTrace();
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
                 }
 
             } else {
-                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
+                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
             }
         }
 
@@ -80,19 +82,16 @@ public class PedidosServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String __method__ = request.getParameter("__method__");
-        ProductoDAO productoDAO = new ProductoDAOImpl();
+        PedidosDAO pedidosDAO = new PedidosDAOImpl();
         String pathInfo = request.getPathInfo();
 
         if (__method__ == null) {
-            Producto nuevoProducto = new Producto();
-            nuevoProducto.setNombre(request.getParameter("nombre"));
-            nuevoProducto.setDescripcion(request.getParameter("descripcion"));
-            nuevoProducto.setPrecio(Double.parseDouble(request.getParameter("precio")));
-            nuevoProducto.setStock(Integer.parseInt(request.getParameter("stock")));
-            nuevoProducto.setId_categoria(Integer.parseInt(request.getParameter("categoria")));
-            nuevoProducto.setTalla(request.getParameter("talla"));
-            nuevoProducto.setColor((request.getParameter("color")));
-            productoDAO.create(nuevoProducto);
+            Pedido nuevoPedido = new Pedido();
+            nuevoPedido.setId_usuario(Integer.parseInt(request.getParameter("id_usuario")));
+            nuevoPedido.setFecha(request.getParameter("fecha"));
+            nuevoPedido.setEstado(request.getParameter("estado"));
+            nuevoPedido.setTotal(Double.parseDouble(request.getParameter("total")));
+            pedidosDAO.create(nuevoPedido);
 
         } else if ("put".equalsIgnoreCase(__method__)) {
             doPut(request, response);
@@ -105,50 +104,47 @@ public class PedidosServlet extends HttpServlet {
         } else {
             System.out.println("Opción POST no soportada.");
         }
-        response.sendRedirect(request.getContextPath() + "/tienda/productos");
+        response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        ProductoDAO productoDAO = new ProductoDAOImpl();
+        PedidosDAO pedidosDAO = new PedidosDAOImpl();
 
         try {
             //Cambiar creo que solo hay q poner los metoso para el upodate puse de mas
-            int id = Integer.parseInt(request.getParameter("id_producto"));
-            Producto producto = new Producto();
-            producto.setId_producto(id);
+            int id = Integer.parseInt(request.getParameter("id_pedido"));
+            Pedido pedido = new Pedido();
+            pedido.setId_pedido(id);
             // producto.setId_producto(Integer.parseInt(request.getParameter("id_producto")));
-            producto.setNombre(request.getParameter("nombre"));
-            producto.setDescripcion(request.getParameter("descripcion"));
-            producto.setPrecio(Double.parseDouble(request.getParameter("precio")));
-            producto.setStock(Integer.parseInt(request.getParameter("stock")));
-            producto.setId_categoria(Integer.parseInt(request.getParameter("categoria")));
-            producto.setTalla(request.getParameter("talla"));
-            producto.setColor((request.getParameter("color")));
-            productoDAO.update(producto);
+            pedido.setId_usuario(Integer.parseInt(request.getParameter("id_usuario")));
+            pedido.setFecha(request.getParameter("fecha"));
+            pedido.setEstado(request.getParameter("estado"));
+            pedido.setTotal(Double.parseDouble(request.getParameter("total")));
+            pedidosDAO.update(pedido);
 
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
         }
 
-        response.sendRedirect(request.getContextPath() + "/tienda/productos");
+        response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        ProductoDAO productoDAO = new ProductoDAOImpl();
+        PedidosDAO pedidosDAO = new PedidosDAOImpl();
 
         try {
             int id = Integer.parseInt(request.getParameter("codigo"));
-            productoDAO.delete(id);
+            pedidosDAO.delete(id);
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
         }
 
-        response.sendRedirect(request.getContextPath() + "/tienda/productos");
+        response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
     }
 }
