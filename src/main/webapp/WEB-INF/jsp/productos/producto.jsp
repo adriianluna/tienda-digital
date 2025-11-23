@@ -18,7 +18,7 @@
 <%@ include file="/WEB-INF/jsp/fragmentos/header.jspf" %>
 <%@ include file="/WEB-INF/jsp/fragmentos/nav.jspf" %>
 
-<%--SOLO QUIEOR QUE SE PUEDA CREAR--%>
+
 <main>
     <section>
         <%--<-- código de body del antiguo productos/productos.jsp -->--%>

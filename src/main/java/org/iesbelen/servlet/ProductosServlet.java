@@ -42,7 +42,7 @@ public class ProductosServlet extends HttpServlet {
                 CategoriasDAO catDAO = new CategoriasDAOImpl();
                 request.setAttribute("listaCategoria", catDAO.getAll());
 
-                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/crear-producto.jsp");
+                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/crear-pedido.jsp");
 
             }else if(pathParts.length == 2 ){
                 ProductoDAO productoDAO = new ProductoDAOImpl();

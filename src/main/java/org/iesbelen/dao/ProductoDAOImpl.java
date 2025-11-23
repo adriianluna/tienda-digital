@@ -17,7 +17,8 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
 
         try {
             conn = connectDB();
-            ps = conn.prepareStatement("INSERT INTO productos (nombre,descripcion,precio,stock,id_categoria,talla,color) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            ps = conn.prepareStatement("INSERT INTO productos (nombre,descripcion,precio,stock,id_categoria,talla,color) VALUES (?,?,?,?,?,?,?)"
+                    , Statement.RETURN_GENERATED_KEYS);
 
             int idx = 1;
 

@@ -75,19 +75,28 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
 
         Connection conn = null;
         PreparedStatement ps = null;
+        ResultSet rs = null;
+        ResultSet rsGenKeys = null;
 
         try {
             conn = connectDB();
-            ps = conn.prepareStatement("INSERT INTO usuarios (nombre, password, rol) VALUES (?, ?, ?)",
+            ps = conn.prepareStatement("INSERT INTO usuarios (nombre,email, password, rol) VALUES (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
 
-            ps.setString(1, usuario.getNombre());
-            ps.setString(2, usuario.getPassword());
-            ps.setString(3, usuario.getRol());
+            int idx = 1;
+            ps.setString(idx++, usuario.getNombre());
+            ps.setString(idx++, usuario.getEmail());
+            ps.setString(idx++, usuario.getPassword());
+            ps.setString(idx++, usuario.getRol());
             ps.executeUpdate();
 
-            ResultSet rsGenKeys = ps.getGeneratedKeys();
-            if (rsGenKeys.next()) usuario.setId_usuario(rsGenKeys.getInt(1));
+            int rows = ps.executeUpdate();
+            if (rows == 0)
+                System.out.println("INSERT de usuarios con 0 filas insertadas.");
+
+            rsGenKeys = ps.getGeneratedKeys();
+            if (rsGenKeys.next())
+                usuario.setId_usuario(rsGenKeys.getInt(1));
 
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -102,11 +111,12 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
         PreparedStatement ps = null;
         try {
             conn = connectDB();
-            ps = conn.prepareStatement("UPDATE usuarios SET nombre=?, password=?, rol=? WHERE id_usuario=?");
+            ps = conn.prepareStatement("UPDATE usuarios SET nombre=?,email =?, password=?, rol=? WHERE id_usuario=?");
             ps.setString(1, usuario.getNombre());
-            ps.setString(2, usuario.getPassword());
-            ps.setString(3, usuario.getRol());
-            ps.setInt(4, usuario.getId_usuario());
+            ps.setString(2, usuario.getEmail());
+            ps.setString(3, usuario.getPassword());
+            ps.setString(4, usuario.getRol());
+            ps.setInt(5, usuario.getId_usuario());
             ps.executeUpdate();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
