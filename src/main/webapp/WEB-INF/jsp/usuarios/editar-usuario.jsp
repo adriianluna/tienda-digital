@@ -63,7 +63,7 @@
                 <label>Email</label>
             </div>
             <div style="float: none;width: auto;overflow: hidden;">
-                <input  name="email" value="<%= usu.getEmail() %>" />
+                <input name="email" value="<%= usu.getEmail() %>" />
             </div>
         </div>
         <div style="margin-top: 6px;" class="clearfix">
@@ -71,7 +71,7 @@
                 <label>Password</label>
             </div>
             <div style="float: none;width: auto;overflow: hidden;">
-                <input name="password" value="<%= usu.getPassword() %>" />
+                <input type="password" name="password" value="<%= usu.getPassword() %>" />
             </div>
         </div>
         <div style="margin-top: 6px;" class="clearfix">
@@ -83,8 +83,8 @@
                     <select name="rol" id="rol">
                         <option value="">-- Selecciona una rol --</option>
 
-                        <option value="admin">Administrador</option>
-                        <option value="cliente">Cliente</option>
+                        <option value="admin" <%= "admin".equals(usu.getRol()) ? "selected" : "" %>>Administrador</option>
+                        <option value="cliente" <%= "cliente".equals(usu.getRol()) ? "selected" : "" %>>Cliente</option>
                     </select>
                 </div>
             </div>

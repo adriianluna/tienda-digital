@@ -89,13 +89,13 @@ public class UsuariosServlet extends HttpServlet {
             nuevoUsuario.setNombre(request.getParameter("nombre"));
             nuevoUsuario.setEmail(request.getParameter("email"));
             //Hash para la contraseña
-           /* try {
+            try {
                 String hash = Utilidades.hashPassword(request.getParameter("password"));
                 nuevoUsuario.setPassword(hash);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
-            }*/
-            nuevoUsuario.setPassword(request.getParameter("password"));
+            }
+            //nuevoUsuario.setPassword(request.getParameter("password"));
             nuevoUsuario.setRol(request.getParameter("rol"));
             usuarioDAO.create(nuevoUsuario);
 
