@@ -64,14 +64,14 @@
                 Rol
             </div>
             <div style="float: none;width: auto;overflow: hidden;">
-
+                <div>
                     <select name="rol" id="rol">
                         <option value="">-- Selecciona una rol --</option>
 
                         <option value="admin">Administrador</option>
                         <option value="cliente">Cliente</option>
                     </select>
-
+                 </div>
             </div>
        </div>
     </form>
