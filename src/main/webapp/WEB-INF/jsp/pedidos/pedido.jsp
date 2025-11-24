@@ -84,9 +84,9 @@
                 <%--<div style="float: left;width: 20%"><%= producto.getTalla()%></div>
                 <div style="float: left;width: 20%"><%= producto.getColor()%></div>--%>
                 <div style="float: none;width: auto;overflow: hidden;">
-                    <%--<form action="${pageContext.request.contextPath}/tienda/productos/<%= pedido.getId_pedido()%>" style="display: inline;">
+                    <form action="${pageContext.request.contextPath}/tienda/pedidos/<%= pedido.getId_pedido()%>" style="display: inline;">
                         <input type="submit" value="Ver Detalle" />
-                    </form>--%>
+                    </form>
                     <form action="${pageContext.request.contextPath}/tienda/pedidos/editar/<%= pedido.getId_pedido()%>" style="display: inline;">
                         <input type="submit" value="Editar" />
                     </form>

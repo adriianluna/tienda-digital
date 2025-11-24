@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.iesbelen.dao.*;
 import org.iesbelen.model.Pedido;
-import org.iesbelen.model.Producto;
+
 import org.iesbelen.model.Usuario;
 
 import java.io.IOException;
@@ -42,25 +42,25 @@ public class PedidosServlet extends HttpServlet {
                 request.setAttribute("listaUsuarios", listaUsuarios);
                 dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/crear-pedido.jsp");
 
-            }/*else if(pathParts.length == 2 ){
-                ProductoDAO productoDAO = new ProductoDAOImpl();
+            }else if(pathParts.length == 2 ){
+                PedidosDAO pedidosDAO = new PedidosDAOImpl();
 
                 try {
-                    request.setAttribute("producto",
-                            productoDAO.find(Integer.parseInt(pathParts[1])).orElse(null));
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/detalle-producto.jsp");
+                    request.setAttribute("pedido",
+                            pedidosDAO.find(Integer.parseInt(pathParts[1])).orElse(null));
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/detalle-pedido.jsp");
 
                 } catch (NumberFormatException nfe) {
                     nfe.printStackTrace();
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
                 }
-            }*/
+            }
 
             else if (pathParts.length == 3 && "editar".equals(pathParts[1])) {
-                ProductoDAO productoDAO = new ProductoDAOImpl();
+                PedidosDAO pedidosDAO = new PedidosDAOImpl();
                 try {
                     request.setAttribute("pedido",
-                            productoDAO.find(Integer.parseInt(pathParts[2])).orElse(null));
+                            pedidosDAO.find(Integer.parseInt(pathParts[2])).orElse(null));
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/editar-pedido.jsp");
 
                 } catch (NumberFormatException nfe) {
@@ -114,15 +114,12 @@ public class PedidosServlet extends HttpServlet {
         PedidosDAO pedidosDAO = new PedidosDAOImpl();
 
         try {
-            //Cambiar creo que solo hay q poner los metoso para el upodate puse de mas
             int id = Integer.parseInt(request.getParameter("id_pedido"));
             Pedido pedido = new Pedido();
-            pedido.setId_pedido(id);
-            // producto.setId_producto(Integer.parseInt(request.getParameter("id_producto")));
-            pedido.setId_usuario(Integer.parseInt(request.getParameter("id_usuario")));
-            pedido.setFecha(request.getParameter("fecha"));
-            pedido.setEstado(request.getParameter("estado"));
+            pedido.setId_pedido(id); // necesario para identificar qué pedido actualizar
+            pedido.setEstado(request.getParameter("estado")); // solo actualizar lo editable
             pedido.setTotal(Double.parseDouble(request.getParameter("total")));
+
             pedidosDAO.update(pedido);
 
         } catch (NumberFormatException nfe) {

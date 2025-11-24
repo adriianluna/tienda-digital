@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface PedidosDAO {
 
     List<Pedido> getAll();
-    //Optional<Pedido> find(int id);
+    Optional<Pedido> find(int id);
     void create(Pedido pedido);
     void update(Pedido pedido);
     void delete(int idPedido);

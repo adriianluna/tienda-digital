@@ -97,29 +97,25 @@
             </div>
             <div style="float: none;width: auto;overflow: hidden;">
                 <select name="talla" id="talla">
-
-                    <option value="">--Selecciona una talla</option>
-                    <option value="s">S</option>
-                    <option value="m">M</option>
-                    <option value="xl">XL</option>
+                    <option value="">--Selecciona una talla--</option>
+                    <option value="s" <%= "s".equals(prod.getTalla()) ? "selected" : "" %>>S</option>
+                    <option value="m" <%= "m".equals(prod.getTalla()) ? "selected" : "" %>>M</option>
+                    <option value="xl" <%= "xl".equals(prod.getTalla()) ? "selected" : "" %>>XL</option>
                 </select>
-
             </div>
         </div>
 
         <div style="margin-top: 6px;" class="clearfix">
             <div style="float: left;width: 50%">
-                <label>Color</label>
+                Color
             </div>
             <div style="float: none;width: auto;overflow: hidden;">
                 <select name="color" id="color">
-
-                    <option value="">--Selecciona un color</option>
-                    <option value="rojo">Rojo</option>
-                    <option value="azul">Azul</option>
-                    <option value="verde">Verde</option>
+                    <option value="">--Selecciona un color--</option>
+                    <option value="rojo" <%= "rojo".equals(prod.getColor()) ? "selected" : "" %>>Rojo</option>
+                    <option value="azul" <%= "azul".equals(prod.getColor()) ? "selected" : "" %>>Azul</option>
+                    <option value="verde" <%= "verde".equals(prod.getColor()) ? "selected" : "" %>>Verde</option>
                 </select>
-
             </div>
         </div>
         <% 	} else { %>
