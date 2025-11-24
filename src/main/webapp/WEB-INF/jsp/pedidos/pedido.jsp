@@ -75,7 +75,6 @@
                         }
                     }
             %>
-
             <div style="margin-top: 6px;" class="clearfix">
                 <div style="float: left;width: 10%"><%= pedido.getId_pedido()%></div>
                 <div style="float: left;width: 30%"><%= nombreUsuario + "("+pedido.getId_usuario() + ")"%></div>
