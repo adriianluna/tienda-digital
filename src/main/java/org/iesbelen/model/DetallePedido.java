@@ -8,6 +8,26 @@ public class DetallePedido {
     public int cantidad;
     public double precioUnidad;
 
+    //Para JOin
+    private String fechaPedido;
+    private String nombreProducto;
+
+    public void setFechaPedido(String fechaPedido) {
+        this.fechaPedido = fechaPedido;
+    }
+
+    public void setNombreProducto(String nombreProducto) {
+        this.nombreProducto = nombreProducto;
+    }
+
+    public String getFechaPedido() {
+        return fechaPedido;
+    }
+
+    public String getNombreProducto() {
+        return nombreProducto;
+    }
+
     public int getId_detalle() {
         return id_detalle;
     }

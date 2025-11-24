@@ -74,6 +74,13 @@
                     <form action="${pageContext.request.contextPath}/tienda/productos/editar/<%= producto.getId_producto()%>" style="display: inline;">
                         <input type="submit" value="Editar" />
                     </form>
+                    <%--<form action="${pageContext.request.contextPath}/tienda/productos/<%= producto.getId_producto() %>"
+                          method="post" style="display: inline;"
+                          onsubmit="return confirm('¿Estás seguro de que quieres eliminar este producto?');">
+                        <input type="hidden" name="__method__" value="delete"/>
+                        <input type="hidden" name="codigo" value="<%= producto.getId_producto() %>"/>
+                        <input type="submit" value="Eliminar" class="btn btn-danger"/>
+                    </form>--%>
                 <div style="float: none;width: auto;overflow: hidden;">
                     <form action="${pageContext.request.contextPath}/tienda/productos/borrar/" method="post" style="display: inline;">
                         <input type="hidden" name="__method__" value="delete"/>

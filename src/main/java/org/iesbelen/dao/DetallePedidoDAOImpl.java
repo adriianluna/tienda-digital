@@ -20,16 +20,21 @@ public class DetallePedidoDAOImpl extends AbstractDAOImpl implements DetallePedi
         try {
             conn = connectDB();
             s = conn.createStatement();
-            rs = s.executeQuery("SELECT * FROM detalle_pedido");
+            rs = s.executeQuery("SELECT dp.id_detalle, dp.id_pedido, p.fecha, prod.nombre AS nombre_producto, " +
+                    "dp.cantidad, dp.precio_unitario " +
+                    "FROM detalle_pedido dp " +
+                    "JOIN pedidos p ON dp.id_pedido = p.id_pedido " +
+                    "JOIN productos prod ON dp.id_producto = prod.id_producto");
 
             while (rs.next()) {
                 DetallePedido detallePedido = new DetallePedido();
                 int idx = 1;
                 detallePedido.setId_detalle(rs.getInt(idx++));
                 detallePedido.setId_pedido(rs.getInt(idx++));
-                detallePedido.setId_producto(rs.getInt(idx++));
-                detallePedido.setCantidad(rs.getInt(idx));
-                detallePedido.setPrecioUnidad(rs.getInt(idx));
+                detallePedido.setFechaPedido(rs.getString(idx++)); // si usas Date, rs.getDate(idx++)
+                detallePedido.setNombreProducto(rs.getString(idx++));
+                detallePedido.setCantidad(rs.getInt(idx++));
+                detallePedido.setPrecioUnidad(rs.getDouble(idx++));
                 listaDetalles.add(detallePedido);
             }
 

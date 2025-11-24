@@ -8,12 +8,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.iesbelen.dao.*;
 import org.iesbelen.model.DetallePedido;
+import org.iesbelen.model.Pedido;
 import org.iesbelen.model.Producto;
 
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "detallesServlet", value = "/tienda/detalle-pedido/*")
+@WebServlet(name = "detallesServlet", value = "/tienda/detallePedidos/*")
 public class DetallePedidosServlet extends HttpServlet {
 
     @Override
@@ -29,7 +30,7 @@ public class DetallePedidosServlet extends HttpServlet {
             List<DetallePedido> listaDetalles = detallePedidoDAO.getAll();
 
             request.setAttribute("listaDetalles", listaDetalles);
-            dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detalle-pedido/detalle-pedido.jsp");
+            dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detallePedidos/detallePedido.jsp");
 
         } else {
             pathInfo = pathInfo.replaceAll("/$", "");
@@ -40,7 +41,17 @@ public class DetallePedidosServlet extends HttpServlet {
                /* CategoriasDAO catDAO = new CategoriasDAOImpl();
                 request.setAttribute("listaCategoria", catDAO.getAll());*/
 
-                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detalle-pedido/crear-pedido.jsp");
+                PedidosDAO pedidoDAO = new PedidosDAOImpl();
+                List<Pedido> listaPedidos = pedidoDAO.getAll();
+                request.setAttribute("listaPedidos", listaPedidos);
+
+                // Traer todos los productos
+                ProductoDAO productoDAO = new ProductoDAOImpl();
+                List<Producto> listaProductos = productoDAO.getAll();
+                request.setAttribute("listaProductos", listaProductos);
+
+
+                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detallePedidos/crear-detalle.jsp");
 
             }else if(pathParts.length == 2 ){
                 ProductoDAO productoDAO = new ProductoDAOImpl();
@@ -48,11 +59,11 @@ public class DetallePedidosServlet extends HttpServlet {
                 try {
                     request.setAttribute("producto",
                             productoDAO.find(Integer.parseInt(pathParts[1])).orElse(null));
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/detalle-producto.jsp");
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detallePedidos/detalle-producto.jsp");
 
                 } catch (NumberFormatException nfe) {
                     nfe.printStackTrace();
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detallePedidos/producto.jsp");
                 }
             }
 
@@ -61,15 +72,15 @@ public class DetallePedidosServlet extends HttpServlet {
                 try {
                     request.setAttribute("producto",
                             productoDAO.find(Integer.parseInt(pathParts[2])).orElse(null));
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/editar-producto.jsp");
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detallePedidos/editar-producto.jsp");
 
                 } catch (NumberFormatException nfe) {
                     nfe.printStackTrace();
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detallePedidos/producto.jsp");
                 }
 
             } else {
-                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
+                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/detallePedidos/producto.jsp");
             }
         }
 
@@ -82,19 +93,33 @@ public class DetallePedidosServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String __method__ = request.getParameter("__method__");
-        ProductoDAO productoDAO = new ProductoDAOImpl();
-        String pathInfo = request.getPathInfo();
 
         if (__method__ == null) {
-            Producto nuevoProducto = new Producto();
-            nuevoProducto.setNombre(request.getParameter("nombre"));
-            nuevoProducto.setDescripcion(request.getParameter("descripcion"));
-            nuevoProducto.setPrecio(Double.parseDouble(request.getParameter("precio")));
-            nuevoProducto.setStock(Integer.parseInt(request.getParameter("stock")));
-            nuevoProducto.setId_categoria(Integer.parseInt(request.getParameter("categoria")));
-            nuevoProducto.setTalla(request.getParameter("talla"));
-            nuevoProducto.setColor((request.getParameter("color")));
-            productoDAO.create(nuevoProducto);
+            // Crear un nuevo detalle de pedido
+            String idPedidoStr = request.getParameter("idPedido");
+            String idProductoStr = request.getParameter("idProducto");
+            String cantidadStr = request.getParameter("cantidad");
+            String precioUnidadStr = request.getParameter("precioUnidad");
+
+            if (idPedidoStr != null && idProductoStr != null &&
+                    cantidadStr != null && precioUnidadStr != null) {
+
+                int idPedido = Integer.parseInt(idPedidoStr);
+                int idProducto = Integer.parseInt(idProductoStr);
+                int cantidad = Integer.parseInt(cantidadStr);
+                double precioUnidad = Double.parseDouble(precioUnidadStr);
+
+                DetallePedido detalle = new DetallePedido();
+                detalle.setId_pedido(idPedido);
+                detalle.setId_producto(idProducto);
+                detalle.setCantidad(cantidad);
+                detalle.setPrecioUnidad(precioUnidad);
+
+                DetallePedidoDAO detalleDAO = new DetallePedidoDAOImpl();
+                detalleDAO.create(detalle);
+            } else {
+                System.out.println("Faltan parámetros para crear el detalle de pedido.");
+            }
 
         } else if ("put".equalsIgnoreCase(__method__)) {
             doPut(request, response);
@@ -107,35 +132,38 @@ public class DetallePedidosServlet extends HttpServlet {
         } else {
             System.out.println("Opción POST no soportada.");
         }
-        response.sendRedirect(request.getContextPath() + "/tienda/productos");
+
+        response.sendRedirect(request.getContextPath() + "/tienda/detallePedidos");
     }
+
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        ProductoDAO productoDAO = new ProductoDAOImpl();
+        DetallePedidoDAO detalleDAO = new DetallePedidoDAOImpl();
 
         try {
-            //Cambiar creo que solo hay q poner los metoso para el upodate puse de mas
-            int id = Integer.parseInt(request.getParameter("id_producto"));
-            Producto producto = new Producto();
-            producto.setId_producto(id);
-            // producto.setId_producto(Integer.parseInt(request.getParameter("id_producto")));
-            producto.setNombre(request.getParameter("nombre"));
-            producto.setDescripcion(request.getParameter("descripcion"));
-            producto.setPrecio(Double.parseDouble(request.getParameter("precio")));
-            producto.setStock(Integer.parseInt(request.getParameter("stock")));
-            producto.setId_categoria(Integer.parseInt(request.getParameter("categoria")));
-            producto.setTalla(request.getParameter("talla"));
-            producto.setColor((request.getParameter("color")));
-            productoDAO.update(producto);
+            int idDetalle = Integer.parseInt(request.getParameter("id_detalle"));
+            int idPedido = Integer.parseInt(request.getParameter("id_pedido"));
+            int idProducto = Integer.parseInt(request.getParameter("id_producto"));
+            int cantidad = Integer.parseInt(request.getParameter("cantidad"));
+            double precioUnidad = Double.parseDouble(request.getParameter("precioUnidad"));
+
+            DetallePedido detalle = new DetallePedido();
+            detalle.setId_detalle(idDetalle);
+            detalle.setId_pedido(idPedido);
+            detalle.setId_producto(idProducto);
+            detalle.setCantidad(cantidad);
+            detalle.setPrecioUnidad(precioUnidad);
+
+            detalleDAO.update(detalle);
 
         } catch (NumberFormatException nfe) {
             nfe.printStackTrace();
         }
 
-        response.sendRedirect(request.getContextPath() + "/tienda/productos");
+        response.sendRedirect(request.getContextPath() + "/tienda/detallePedidos");
     }
 
     @Override
@@ -151,6 +179,6 @@ public class DetallePedidosServlet extends HttpServlet {
             nfe.printStackTrace();
         }
 
-        response.sendRedirect(request.getContextPath() + "/tienda/productos");
+        response.sendRedirect(request.getContextPath() + "/tienda/detallePedidos");
     }
 }
