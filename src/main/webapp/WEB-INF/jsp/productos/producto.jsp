@@ -1,104 +1,90 @@
 <%@ page import="org.iesbelen.model.Producto" %>
-<%@ page import="java.util.List" %><%--
-  Created by IntelliJ IDEA.
-  User: adria
-  Date: 22/11/2025
-  Time: 10:19
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+
 <html>
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
-    <title>Title</title>
+    <title>Productos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="<%=application.getContextPath()%>/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 <%@ include file="/WEB-INF/jsp/fragmentos/header.jspf" %>
 <%@ include file="/WEB-INF/jsp/fragmentos/nav.jspf" %>
 
+<main class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>Productos</h1>
+        <form action="${pageContext.request.contextPath}/tienda/productos/crear">
+            <button class="btn btn-success">Crear Producto</button>
+        </form>
+    </div>
 
-<main>
-    <section>
-        <%--<-- código de body del antiguo productos/productos.jsp -->--%>
-        <div id="contenedora" style="float:none; margin: 0 auto;width: 900px;" >
-            <div class="clearfix">
-                <div style="float: left; width: 50%">
-                    <h1>Productos</h1>
-                </div>
-                <div style="float: none;width: auto;overflow: hidden;min-height: 80px;position: relative;">
+    <%
+        List<Producto> listaProducto = (List<Producto>) request.getAttribute("listaProducto");
+        if (listaProducto != null && !listaProducto.isEmpty()) {
+    %>
 
-                    <div style="position: absolute; left: 39%; top : 39%;">
-
-                        <form action="${pageContext.request.contextPath}/tienda/productos/crear">
-                            <input type="submit" value="Crear">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+            <tr>
+                <th scope="col">Código</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Descripción</th>
+                <th scope="col" class="text-end">Precio</th>
+                <th scope="col" class="text-end">Stock</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Talla</th>
+                <th scope="col">Color</th>
+                <th scope="col">Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <%
+                for (Producto producto : listaProducto) {
+            %>
+            <tr>
+                <td><%= producto.getId_producto() %></td>
+                <td><%= producto.getNombre() %></td>
+                <td><%= producto.getDescripcion() %></td>
+                <td class="text-end"><%= producto.getPrecio() %>€</td>
+                <td class="text-end"><%= producto.getStock() %></td>
+                <td><%= producto.getId_categoria() %></td>
+                <td><%= producto.getTalla() %></td>
+                <td><%= producto.getColor() %></td>
+                <td>
+                    <div class="d-flex gap-1">
+                        <form action="${pageContext.request.contextPath}/tienda/productos/<%= producto.getId_producto() %>" method="get">
+                            <button class="btn btn-info btn-sm">Ver</button>
+                        </form>
+                        <form action="${pageContext.request.contextPath}/tienda/productos/editar/<%= producto.getId_producto() %>" method="get">
+                            <button class="btn btn-warning btn-sm">Editar</button>
+                        </form>
+                        <form action="${pageContext.request.contextPath}/tienda/productos/borrar/" method="post" onsubmit="return confirm('¿Estás seguro de eliminar este producto?');">
+                            <input type="hidden" name="__method__" value="delete"/>
+                            <input type="hidden" name="codigo" value="<%= producto.getId_producto() %>"/>
+                            <button class="btn btn-danger btn-sm">Eliminar</button>
                         </form>
                     </div>
-
-                </div>
-            </div>
-
-
-            <div class="clearfix">
-                <hr/>
-            </div>
-            <div class="clearfix">
-                <div style="float: left;width: 16%">Código</div>
-                <div style="float: left;width: 16%">Nombre</div>
-                <div style="float: left;width: 16%">Precio</div>
-                <div style="float: left;width: 16%;overflow: hidden;">Stock</div>
-
-            </div>
-            <div class="clearfix">
-                <hr/>
-            </div>
-            <%
-                if (request.getAttribute("listaProducto") != null) {
-                    List<Producto> listaProducto = (List<Producto>)request.getAttribute("listaProducto");
-
-                    for (Producto producto : listaProducto) {
-            %>
-
-            <div style="margin-top: 6px;" class="clearfix">
-                <div style="float: left;width: 10%"><%= producto.getId_producto()%></div>
-                <div style="float: left;width: 30%"><%= producto.getNombre()%></div>
-                <div style="float: left;width: 20%"><%= producto.getPrecio()%></div>
-                <div style="float: left;width: 20%"><%= producto.getStock()%></div>
-                <%--<div style="float: left;width: 20%"><%= producto.getTalla()%></div>
-                <div style="float: left;width: 20%"><%= producto.getColor()%></div>--%>
-                <div style="float: none;width: auto;overflow: hidden;">
-                    <form action="${pageContext.request.contextPath}/tienda/productos/<%= producto.getId_producto()%>" style="display: inline;">
-                        <input type="submit" value="Ver Detalle" />
-                    </form>
-                    <form action="${pageContext.request.contextPath}/tienda/productos/editar/<%= producto.getId_producto()%>" style="display: inline;">
-                        <input type="submit" value="Editar" />
-                    </form>
-                    <%--<form action="${pageContext.request.contextPath}/tienda/productos/<%= producto.getId_producto() %>"
-                          method="post" style="display: inline;"
-                          onsubmit="return confirm('¿Estás seguro de que quieres eliminar este producto?');">
-                        <input type="hidden" name="__method__" value="delete"/>
-                        <input type="hidden" name="codigo" value="<%= producto.getId_producto() %>"/>
-                        <input type="submit" value="Eliminar" class="btn btn-danger"/>
-                    </form>--%>
-                <div style="float: none;width: auto;overflow: hidden;">
-                    <form action="${pageContext.request.contextPath}/tienda/productos/borrar/" method="post" style="display: inline;">
-                        <input type="hidden" name="__method__" value="delete"/>
-                        <input type="hidden" name="codigo" value="<%= producto.getId_producto()%>"/>
-                        <input type="submit" value="Eliminar" />
-                    </form>
-                </div>
-            </div>
+                </td>
+            </tr>
             <%
                 }
-            } else {
             %>
-            No hay registros de producto
-            <% } %>
-        </div>
-    </section>
-</main>
-<%@ include file ="/WEB-INF/jsp/fragmentos/footer.jspf"%>
+            </tbody>
+        </table>
+    </div>
 
+    <%
+    } else {
+    %>
+    <div class="alert alert-info">No hay registros de productos.</div>
+    <% } %>
+</main>
+
+<%@ include file="/WEB-INF/jsp/fragmentos/footer.jspf" %>
 </body>
 </html>

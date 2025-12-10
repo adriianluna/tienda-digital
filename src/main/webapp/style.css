@@ -1,52 +1,207 @@
-.head1 {
-    font-size:40px;
-    color:#009900;
-    font-weight:bold;
-}
-.head2 {
-    font-size:17px;
-    margin-left:10px;
-    margin-bottom:15px;
-}
-body {
-    margin: 0 auto;
-    background-position:center;
-    background-size: contain;
+/* Tipografía y Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+/*Header*/
+header {
+    background-color: #1f3b4d;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+header .head1 {
+    font-size: 36px;
+    font-weight: bold;
+}
+
+header .head2 {
+    font-size: 18px;
+    margin-top: 5px;
+    font-weight: 400;
+    color: #c0d6df;
+}
+
+/* Menú*/
 .menu {
     position: sticky;
     top: 0;
-    background-color: #009900;
-    padding:10px 0px 10px 0px;
-    color:white;
-    margin: 0 auto;
-    overflow: hidden;
+    background-color: #009688;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
 }
+
 .menu a {
-    float: left;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 20px;
-}
-.menu-log {
-    right: auto;
-    float: right;
-}
-footer {
-    width: 100%;
-    bottom: 0px;
-    background-color: #000;
     color: #fff;
-    position: absolute;
-    padding-top:20px;
-    padding-bottom:50px;
-    text-align:center;
-    font-size:30px;
-    font-weight:bold;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 12px 18px;
+    transition: background 0.3s, color 0.3s;
+    border-radius: 5px;
+    margin: 0 5px;
 }
-.body_sec {
-    margin-left:20px;
+
+.menu a:hover {
+    background-color: #00796b;
+}
+
+/* Contenido principal */
+main {
+    flex: 1 0 auto;
+    padding: 20px;
+}
+
+/* Contenedor de productos*/
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* Contenedor de productos */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.3s, box-shadow 0.3s;
+    flex: 1 1 300px;
+    max-width: 350px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+.btn-primary {
+    background-color: #009688;
+    border: none;
+    width: 100%;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #00796b;
+}
+
+/* Footer */
+footer {
+    background-color: #1f3b4d;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+/*Tablas (Carrito y Pedidos)*/
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+}
+
+table th {
+    background-color: #009688;
+    color: #fff;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/*Botones generales*/
+.btn {
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.btn-danger {
+    background-color: #e53935;
+    color: #fff;
+}
+
+.btn-danger:hover {
+    background-color: #b71c1c;
+}
+
+.btn-success {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background-color: #2e7d32;
+}
+
+.btn-secondary {
+    background-color: #607d8b;
+    color: #fff;
+}
+
+.btn-secondary:hover {
+    background-color: #455a64;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        align-items: center;
+    }
 }

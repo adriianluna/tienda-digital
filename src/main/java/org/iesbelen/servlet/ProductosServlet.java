@@ -31,6 +31,7 @@ public class ProductosServlet extends HttpServlet {
             List<Producto> listaProducto = productoDao.getAll();
 
             request.setAttribute("listaProducto", listaProducto);
+            //dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
             dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
 
         } else {
