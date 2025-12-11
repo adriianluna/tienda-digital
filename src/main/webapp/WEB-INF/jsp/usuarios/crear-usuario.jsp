@@ -75,6 +75,7 @@
             </div>
         </div>
 
+
         <div style="margin-top: 20px;">
             <p>¿Ya tienes cuenta?
                 <a href="${pageContext.request.contextPath}/tienda/usuarios/login">Inicia sesión aquí</a>
