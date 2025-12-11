@@ -7,15 +7,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.iesbelen.dao.*;
-import org.iesbelen.model.Pedido;
-
-import org.iesbelen.model.Usuario;
+import org.iesbelen.model.*;
 
 import java.io.IOException;
 import java.util.List;
 
 @WebServlet(name = "pedidosServlet", value = "/tienda/pedidos/*")
 public class PedidosServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -23,125 +22,146 @@ public class PedidosServlet extends HttpServlet {
         RequestDispatcher dispatcher;
         String pathInfo = request.getPathInfo();
 
+        PedidosDAO pedidoDAO = new PedidosDAOImpl();
+        Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("usuario-logado");
 
         if (pathInfo == null || "/".equals(pathInfo)) {
-            PedidosDAO pedidosDAO= new PedidosDAOImpl();
-            List<Pedido> listaPedido = pedidosDAO.getAll();
+            // Listar pedidos
+            String filtro = request.getParameter("filtro"); // obtienes el filtro del buscador
+            List<Pedido> listaPedidos;
 
-            request.setAttribute("listaPedido", listaPedido);
+            if ("admin".equalsIgnoreCase(usuarioLogado.getRol())) {
+                listaPedidos = pedidoDAO.getAll();
+            } else {
+                listaPedidos = pedidoDAO.findByUsuario(usuarioLogado.getId_usuario());
+            }
+
+            request.setAttribute("listaPedidos", listaPedidos);
             dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
 
         } else {
+
             pathInfo = pathInfo.replaceAll("/$", "");
             String[] pathParts = pathInfo.split("/");
 
-            if (pathParts.length == 2 && "crear".equals(pathParts[1])) {
-              //Para poder seleccionar el usuario al crearlo
-                UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
-                List<Usuario> listaUsuarios = usuarioDAO.getAll();
-                request.setAttribute("listaUsuarios", listaUsuarios);
-                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/crear-pedido.jsp");
-
-            }else if(pathParts.length == 2 ){
-                PedidosDAO pedidosDAO = new PedidosDAOImpl();
-
+            // --------------------------------------------------------
+            // ORIGINAL: /tienda/pedidos/{id} → ver detalle
+            // --------------------------------------------------------
+            if (pathParts.length == 2) {
                 try {
-                    request.setAttribute("pedido",
-                            pedidosDAO.find(Integer.parseInt(pathParts[1])).orElse(null));
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/detalle-pedido.jsp");
+                    int idPedido = Integer.parseInt(pathParts[1]);
+                    Pedido pedido = pedidoDAO.find(idPedido).orElse(null);
 
-                } catch (NumberFormatException nfe) {
-                    nfe.printStackTrace();
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
-                }
-            }
+                    if (pedido != null) {
+                        List<DetallePedido> listaDetalles;
 
-            else if (pathParts.length == 3 && "editar".equals(pathParts[1])) {
-                PedidosDAO pedidosDAO = new PedidosDAOImpl();
-                try {
-                    request.setAttribute("pedido",
-                            pedidosDAO.find(Integer.parseInt(pathParts[2])).orElse(null));
-                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/editar-pedido.jsp");
+                        listaDetalles = (List<DetallePedido>) request.getSession()
+                                .getAttribute("listaDetallePedidoSesion");
 
-                } catch (NumberFormatException nfe) {
-                    nfe.printStackTrace();
+                        if (listaDetalles != null) {
+                            request.getSession().removeAttribute("listaDetallePedidoSesion");
+                        } else {
+                            DetallePedidoDAO detalleDAO = new DetallePedidoDAOImpl();
+                            listaDetalles = detalleDAO.findByPedido(idPedido);
+
+                            ProductoDAO productoDAO = new ProductoDAOImpl();
+                            for (DetallePedido detalle : listaDetalles) {
+                                Producto producto = productoDAO.find(detalle.getId_producto()).orElse(null);
+                                if (producto != null) {
+                                    detalle.setNombreProducto(producto.getNombre());
+                                }
+                            }
+                        }
+
+                        request.setAttribute("pedido", pedido);
+                        request.setAttribute("listaDetalles", listaDetalles);
+                        dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/detalle-pedido.jsp");
+                    } else {
+                        dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
+                    }
+
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
                 }
 
             } else {
                 dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
             }
+
+
+
+            // --------------------------------------------------------
+            // NUEVO: /tienda/pedidos/eliminar/{id}
+            // --------------------------------------------------------
+            if (pathParts.length == 3 && "eliminar".equals(pathParts[1])) {
+                try {
+                    int idEliminar = Integer.parseInt(pathParts[2]);
+                    pedidoDAO.delete(idEliminar);
+
+                    // Redirigir después de eliminar
+                    response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
+                    return;
+
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
+                    return;
+                }
+            }
+
+            // --------------------------------------------------------
+            // NUEVO: /tienda/pedidos/editar/{id}
+            // --------------------------------------------------------
+            if (pathParts.length == 3 && "editar".equals(pathParts[1])) {
+                try {
+                    int idEditar = Integer.parseInt(pathParts[2]);
+                    Pedido pedidoEditar = pedidoDAO.find(idEditar).orElse(null);
+
+                    if (pedidoEditar != null) {
+                        request.setAttribute("pedido", pedidoEditar);
+                        dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/editar-pedido.jsp");
+                    } else {
+                        dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
+                    }
+
+                    dispatcher.forward(request, response);
+                    return;
+
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                    dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
+                    dispatcher.forward(request, response);
+                    return;
+                }
+            }
+
         }
 
         dispatcher.forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        String __method__ = request.getParameter("__method__");
-        PedidosDAO pedidosDAO = new PedidosDAOImpl();
         String pathInfo = request.getPathInfo();
+        String[] pathParts = pathInfo.split("/");
 
-        if (__method__ == null) {
-            Pedido nuevoPedido = new Pedido();
-            nuevoPedido.setId_usuario(Integer.parseInt(request.getParameter("id_usuario")));
-            nuevoPedido.setFecha(request.getParameter("fecha"));
-            nuevoPedido.setEstado(request.getParameter("estado"));
-            nuevoPedido.setTotal(Double.parseDouble(request.getParameter("total")));
-            //pedidosDAO.create(nuevoPedido);
+        if (pathParts.length == 3 && "editar".equals(pathParts[1])) {
+            int idPedido = Integer.parseInt(pathParts[2]);
+            String estado = request.getParameter("estado");
 
-        } else if ("put".equalsIgnoreCase(__method__)) {
-            doPut(request, response);
-            return;
+            PedidosDAO pedidoDAO = new PedidosDAOImpl();
+            Pedido pedido = pedidoDAO.find(idPedido).orElse(null);
 
-        } else if ("delete".equalsIgnoreCase(__method__)) {
-            doDelete(request, response);
-            return;
+            if (pedido != null) {
+                pedido.setEstado(estado);
+                pedidoDAO.update(pedido);
+            }
 
-        } else {
-            System.out.println("Opción POST no soportada.");
+            response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
         }
-        response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
     }
 
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        PedidosDAO pedidosDAO = new PedidosDAOImpl();
-
-        try {
-            int id = Integer.parseInt(request.getParameter("id_pedido"));
-            Pedido pedido = new Pedido();
-            pedido.setId_pedido(id); // necesario para identificar qué pedido actualizar
-            pedido.setEstado(request.getParameter("estado")); // solo actualizar lo editable
-            pedido.setTotal(Double.parseDouble(request.getParameter("total")));
-
-            pedidosDAO.update(pedido);
-
-        } catch (NumberFormatException nfe) {
-            nfe.printStackTrace();
-        }
-
-        response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        PedidosDAO pedidosDAO = new PedidosDAOImpl();
-
-        try {
-            int id = Integer.parseInt(request.getParameter("codigo"));
-            pedidosDAO.delete(id);
-        } catch (NumberFormatException nfe) {
-            nfe.printStackTrace();
-        }
-
-        response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
-    }
 }

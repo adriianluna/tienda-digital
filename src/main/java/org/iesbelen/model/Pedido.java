@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class Pedido {
     private int id_pedido;
     private int id_usuario;
-    private String fecha;
+    private LocalDateTime fecha;
     private String estado;
     private double total;
 
@@ -19,8 +19,8 @@ public class Pedido {
     public int getId_usuario() { return id_usuario; }
     public void setId_usuario(int id_usuario) { this.id_usuario = id_usuario; }
 
-    public String getFecha() { return fecha; }
-    public void setFecha(String fecha) { this.fecha = fecha; }
+    public LocalDateTime getFecha() { return fecha; }
+    public void setFecha(LocalDateTime fecha) { this.fecha = fecha; }
 
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }

@@ -22,6 +22,14 @@
         </form>
     </div>
 
+    <!-- Buscador -->
+    <form class="mb-3" action="${pageContext.request.contextPath}/tienda/productos" method="get">
+        <div class="input-group">
+            <input type="text" name="filtro" class="form-control" placeholder="Buscar producto por nombre..." value="<%= request.getParameter("filtro") != null ? request.getParameter("filtro") : "" %>">
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </div>
+    </form>
+
     <%
         List<Producto> listaProducto = (List<Producto>) request.getAttribute("listaProducto");
         if (listaProducto != null && !listaProducto.isEmpty()) {

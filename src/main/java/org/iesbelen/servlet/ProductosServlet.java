@@ -26,12 +26,18 @@ public class ProductosServlet extends HttpServlet {
         String pathInfo = request.getPathInfo();
 
 
+
         if (pathInfo == null || "/".equals(pathInfo)) {
             ProductoDAO productoDao = new ProductoDAOImpl();
-            List<Producto> listaProducto = productoDao.getAll();
+            List<Producto> listaProducto;
 
+            String filtro = request.getParameter("filtro");
+            if (filtro != null && !filtro.isEmpty()) {
+                listaProducto = productoDao.getByNombre(filtro);
+            } else {
+                listaProducto = productoDao.getAll();
+            }
             request.setAttribute("listaProducto", listaProducto);
-            //dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
             dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/productos/producto.jsp");
 
         } else {

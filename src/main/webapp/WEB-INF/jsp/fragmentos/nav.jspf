@@ -12,12 +12,13 @@
     <a href="<%=application.getContextPath()%>/tienda/usuarios">Usuarios</a>
     <a href="<%=application.getContextPath()%>/tienda/productos">Productos</a>
     <a href="<%=application.getContextPath()%>/tienda/pedidos">Pedidos</a>
-    <a href="<%=application.getContextPath()%>/tienda/detallePedidos">Detalle Pedidos</a>
     <% } %>
 
     <!-- Todos los usuarios logueados ven el carrito -->
     <% if (usuarioNav != null) { %>
     <a href="<%=application.getContextPath()%>/tienda/carrito">Carrito</a>
+    <a href="<%=application.getContextPath()%>/tienda/pedidos">Detalle Pedidos</a>
+
     <% } %>
 
     <!-- Login/Logout -->

@@ -1,87 +1,71 @@
+<%@ page import="org.iesbelen.model.Pedido" %>
 <%@ page import="org.iesbelen.model.DetallePedido" %>
-<%@ page import="java.util.List" %><%--
-  Created by IntelliJ IDEA.
-  User: adria
-  Date: 24/11/2025
-  Time: 20:19
-  To change this template use File | Settings | File Templates.
---%>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
-    <title>Detalle pedido</title>
-    <link rel="stylesheet" type="text/css" href="<%=application.getContextPath()%>/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Detalle del Pedido</title>
 </head>
 <body>
 <%@ include file="/WEB-INF/jsp/fragmentos/header.jspf" %>
 <%@ include file="/WEB-INF/jsp/fragmentos/nav.jspf" %>
-<main>
-    <section>
-        <div class="container mt-4">
-            <h1>Detalle de Pedidos</h1>
 
-            <form action="${pageContext.request.contextPath}/tienda/detallePedidos/crear">
-                <input type="submit" value="Crear" class="btn btn-primary mb-3">
-            </form>
+<main class="container my-5">
+    <%
+        Pedido pedido = (Pedido) request.getAttribute("pedido");
+        List<DetallePedido> listaDetallePedidoSesion = (List<DetallePedido>) request.getAttribute("listaDetallePedidoSesion");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+    %>
 
+    <div class="alert alert-success text-center">
+        <h2>¡Pedido realizado con éxito!</h2>
+        <p>Tu pedido #<%= pedido.getId_pedido() %> ha sido registrado.</p>
+    </div>
 
-
-            <%
-                List<DetallePedido> listaDetalles = (List<DetallePedido>) request.getAttribute("listaDetalles");
-                if (listaDetalles != null && !listaDetalles.isEmpty()) {
-            %>
-
-            <table class="table table-bordered table-striped">
-                <thead>
-                <tr>
-                    <th>Id Detalle</th>
-                    <th>Id Pedido</th>
-                    <th>Fecha Pedido</th>
-                    <th>Usuario</th>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio Unitario</th>
-                </tr>
-                </thead>
-                <tbody>
-                <%
-                    for (DetallePedido detalle : listaDetalles) {
-                %>
-                <tr>
-                    <td><%= detalle.getId_detalle() %></td>
-                    <td><%= detalle.getId_pedido() %></td>
-                    <td><%= detalle.getFechaPedido() %></td>
-                    <td><%= detalle.getNombreProducto() %></td>
-                    <td><%= detalle.getNombreProducto() %></td>
-                    <td><%= detalle.getCantidad() %></td>
-                    <td><%= detalle.getPrecioUnidad() %></td>
-                    <td>
-                        <!-- Editar -->
-                        <form action="${pageContext.request.contextPath}/tienda/detallePedidos/editar/<%= detalle.getId_detalle() %>" method="get" style="display:inline;">
-                            <input type="submit" value="Editar" class="btn btn-warning mb-3">
-                        </form>
-
-                        <!-- Eliminar -->
-                        <form action="${pageContext.request.contextPath}/tienda/detallePedidos/<%= detalle.getId_detalle() %>" method="post" style="display:inline;">
-                            <input type="hidden" name="__method__" value="delete"/>
-                            <input type="hidden" name="codigo" value="<%= detalle.getId_detalle() %>"/>
-                            <input type="submit" value="Eliminar" class="btn btn-danger mb-3">
-                        </form>
-                    </td>
-                </tr>
-                <% } %>
-                </tbody>
-            </table>
-
-            <% } else { %>
-            <p>No hay registros de pedidos</p>
-            <% } %>
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>Información del Pedido</h4>
         </div>
-    </section>
+        <div class="card-body">
+            <p><strong>Número de pedido:</strong> <%= pedido.getId_pedido() %></p>
+            <p><strong>Fecha:</strong> <%= pedido.getFecha().format(formatter) %></p>
+            <p><strong>Estado:</strong>
+                <span class="badge bg-warning"><%= pedido.getEstado() %></span>
+            </p>
+            <p><strong>Total:</strong> € <%= String.format("%.2f", pedido.getTotal()) %></p>
+        </div>
+    </div>
+
+    <h4>Productos del Pedido</h4>
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Precio unitario</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (DetallePedido detalle : listaDetallePedidoSesion) { %>
+        <tr>
+            <td><%= detalle.getNombreProducto() %></td>
+            <td>€ <%= String.format("%.2f", detalle.getPrecio_unitario()) %></td>
+            <td><%= detalle.getCantidad() %></td>
+            <td>€ <%= String.format("%.2f", detalle.getSubtotal()) %></td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+
+    <div class="text-center mt-4">
+        <a href="<%= request.getContextPath() %>/tienda/pedidos" class="btn btn-primary">Ver todos mis pedidos</a>
+        <a href="<%= request.getContextPath() %>/" class="btn btn-secondary">Volver a la tienda</a>
+    </div>
 </main>
 
-<%@ include file ="/WEB-INF/jsp/fragmentos/footer.jspf"%>
+<%@ include file="/WEB-INF/jsp/fragmentos/footer.jspf" %>
 </body>
 </html>
