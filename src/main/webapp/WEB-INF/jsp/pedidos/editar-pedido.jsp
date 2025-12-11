@@ -19,7 +19,7 @@
         if (pedido != null) {
     %>
 
-    <form action="${pageContext.request.contextPath}/tienda/pedidos/editar/<%= pedido.getId_pedido() %>" method="post">
+    <form action="${pageContext.request.contextPath}/tienda/pedidos/editar/" method="post">
         <input type="hidden" name="__method__" value="put" />
 
         <div class="mb-3 row">
@@ -45,7 +45,7 @@
         <div class="mb-3 row">
             <label class="col-sm-2 col-form-label">Total</label>
             <div class="col-sm-6">
-                <input type="number" name="total" class="form-control" value="<%= pedido.getTotal() %>"/>
+                <input type="number" name="total" class="form-control" value="<%= pedido.getTotal() %>" readonly/>
             </div>
         </div>
 

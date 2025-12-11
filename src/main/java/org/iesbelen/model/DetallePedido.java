@@ -9,7 +9,7 @@ public class DetallePedido {
 
     // Atributos extra para mostrar info (no están en BD)
     private String nombreProducto;
-    private double subtotal; // cantidad * precio_unitario
+
 
     // Constructores
     public DetallePedido() {}

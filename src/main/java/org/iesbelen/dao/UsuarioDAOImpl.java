@@ -188,4 +188,54 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
 
         return Optional.empty();
     }
+
+    @Override
+    public boolean existeNombre(String nombre) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = connectDB();
+            ps = conn.prepareStatement("SELECT COUNT(*) FROM usuarios WHERE nombre = ?");
+            ps.setString(1, nombre);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            closeDb(conn, ps, rs);
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean existeEmail(String email) {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            conn = connectDB();
+            ps = conn.prepareStatement("SELECT COUNT(*) FROM usuarios WHERE email = ?");
+            ps.setString(1, email);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            closeDb(conn, ps, rs);
+        }
+
+        return false;
+    }
 }

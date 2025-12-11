@@ -17,9 +17,9 @@
 <%@ include file="/WEB-INF/jsp/fragmentos/header.jspf" %>
 <%@ include file="/WEB-INF/jsp/fragmentos/nav.jspf" %>
 
-
-<%@ include file ="/WEB-INF/jsp/fragmentos/footer.jspf"%>
 <h2>Home</h2>
+<%@ include file ="/WEB-INF/jsp/fragmentos/footer.jspf"%>
+
 <%@include file="boostrap.jspf"%>
 </body>
 </html>

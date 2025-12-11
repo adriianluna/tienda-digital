@@ -1,6 +1,8 @@
+<%@ page import="org.iesbelen.model.Usuario" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Crear Usuario</title>
     <link rel="stylesheet" type="text/css" href="<%=application.getContextPath()%>/style.css">
 </head>
@@ -8,81 +10,92 @@
 <%@ include file="/WEB-INF/jsp/fragmentos/header.jspf" %>
 <%@ include file="/WEB-INF/jsp/fragmentos/nav.jspf" %>
 
-<div id="contenedora" style="float:none; margin: 0 auto;width: 900px;">
+<main class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
 
-    <% if (request.getAttribute("error") != null) { %>
-    <div style="color: red; background-color: #ffe6e6; padding: 10px; margin: 10px 0;">
-        <%= request.getAttribute("error") %>
-    </div>
-    <% } %>
+            <h1 class="mb-4">Crear Usuario</h1>
 
-    <!-- IMPORTANTE: La acción debe ser /tienda/usuarios SIN /crear -->
-    <form action="${pageContext.request.contextPath}/tienda/usuarios/crear" method="post">
-
-        <div class="clearfix">
-            <div style="float: left; width: 50%">
-                <h1>Crear Usuario</h1>
+            <!-- Mostrar error si existe -->
+            <% if (request.getAttribute("error") != null) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <%= request.getAttribute("error") %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
-            <div style="float: none;width: auto;overflow: hidden;min-height: 80px;position: relative;">
-                <div style="position: absolute; left: 39%; top : 39%;">
-                    <input type="submit" value="Crear"/>
+            <% } %>
+
+            <form action="${pageContext.request.contextPath}/tienda/usuarios" method="post">
+
+                <!-- Nombre de usuario -->
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre de usuario</label>
+                    <input type="text"
+                           class="form-control"
+                           id="nombre"
+                           name="nombre"
+                           value="<%= request.getAttribute("nombre") != null ? request.getAttribute("nombre") : "" %>"
+                           required>
                 </div>
-            </div>
-        </div>
 
-        <div class="clearfix">
-            <hr/>
-        </div>
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email"
+                           class="form-control"
+                           id="email"
+                           name="email"
+                           value="<%= request.getAttribute("email") != null ? request.getAttribute("email") : "" %>"
+                           required>
+                </div>
 
-        <!-- IMPORTANTE: name="nombre" (no "usuario") -->
-        <div style="margin-top: 6px;" class="clearfix">
-            <div style="float: left;width: 50%">
-                Nombre de usuario
-            </div>
-            <div style="float: none;width: auto;overflow: hidden;">
-                <input name="nombre" required />
-            </div>
-        </div>
+                <!-- Contraseña -->
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password"
+                           class="form-control"
+                           id="password"
+                           name="password"
+                           minlength="4"
+                           required>
+                    <div class="form-text">Mínimo 4 caracteres</div>
+                </div>
 
-        <div style="margin-top: 6px;" class="clearfix">
-            <div style="float: left;width: 50%">
-                Email
-            </div>
-            <div style="float: none;width: auto;overflow: hidden;">
-                <input name="email" type="email" required />
-            </div>
-        </div>
+                <!-- Rol (solo visible para admins) -->
+                <%
+                    Usuario usuarioLogado = (Usuario) session.getAttribute("usuario-logado");
+                     esAdmin = usuarioLogado != null && "administrador".equalsIgnoreCase(usuarioLogado.getRol());
+                %>
 
-        <div style="margin-top: 6px;" class="clearfix">
-            <div style="float: left;width: 50%">
-                Contraseña
-            </div>
-            <div style="float: none;width: auto;overflow: hidden;">
-                <input name="password" type="password" required />
-            </div>
-        </div>
+                <% if (esAdmin) { %>
+                <div class="mb-3">
+                    <label for="rol" class="form-label">Rol</label>
+                    <select name="rol" id="rol" class="form-select">
+                        <option value="cliente">Cliente</option>
+                        <option value="administrador">Administrador</option>
+                    </select>
+                </div>
+                <% } else { %>
+                <!-- Usuario público siempre será cliente -->
+                <input type="hidden" name="rol" value="cliente">
+                <% } %>
 
-        <!-- El rol es opcional, si no se pone será "cliente" por defecto -->
-        <div style="margin-top: 6px;" class="clearfix">
-            <div style="float: left;width: 50%">
-                Rol
-            </div>
-            <div style="float: none;width: auto;overflow: hidden;">
-                <select name="rol">
-                    <option value="cliente">Cliente</option>
-                    <option value="admin">Administrador</option>
-                </select>
-            </div>
-        </div>
+                <!-- Botón Crear -->
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-success">Crear Usuario</button>
+                </div>
 
+                <!-- Link a login -->
+                <div class="text-center">
+                    <p>¿Ya tienes cuenta?
+                        <a href="${pageContext.request.contextPath}/tienda/usuarios/login">Inicia sesión aquí</a>
+                    </p>
+                </div>
 
-        <div style="margin-top: 20px;">
-            <p>¿Ya tienes cuenta?
-                <a href="${pageContext.request.contextPath}/tienda/usuarios/login">Inicia sesión aquí</a>
-            </p>
+            </form>
+
         </div>
-    </form>
-</div>
+    </div>
+</main>
 
 <%@ include file="/WEB-INF/jsp/fragmentos/footer.jspf"%>
 </body>

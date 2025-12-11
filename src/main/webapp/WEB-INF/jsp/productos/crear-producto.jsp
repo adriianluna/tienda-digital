@@ -15,32 +15,33 @@
 <main class="container my-5">
     <h1 class="mb-4">Crear Producto</h1>
     <form action="${pageContext.request.contextPath}/tienda/productos/crear/" method="post" class="row g-3">
+
         <!-- Nombre -->
-        <div class="col-md-6">
+        <div class="col-12">
             <label for="nombre" class="form-label">Nombre</label>
             <input type="text" class="form-control" name="nombre" id="nombre" required>
         </div>
 
         <!-- Descripción -->
-        <div class="col-md-6">
+        <div class="col-12">
             <label for="descripcion" class="form-label">Descripción</label>
             <input type="text" class="form-control" name="descripcion" id="descripcion">
         </div>
 
         <!-- Precio -->
-        <div class="col-md-3">
+        <div class="col-12">
             <label for="precio" class="form-label">Precio</label>
             <input type="number" class="form-control" name="precio" id="precio" min="0" step="0.01">
         </div>
 
         <!-- Stock -->
-        <div class="col-md-3">
+        <div class="col-12">
             <label for="stock" class="form-label">Stock</label>
             <input type="number" class="form-control" name="stock" id="stock" min="0">
         </div>
 
         <!-- Categoría -->
-        <div class="col-md-6">
+        <div class="col-12">
             <label for="categoria" class="form-label">Categoría</label>
             <select name="categoria" id="categoria" class="form-select">
                 <option value="">-- Selecciona una categoría --</option>
@@ -58,10 +59,10 @@
         </div>
 
         <!-- Talla -->
-        <div class="col-md-3">
+        <div class="col-12">
             <label for="talla" class="form-label">Talla</label>
             <select name="talla" id="talla" class="form-select">
-                <option value="">--Selecciona una talla--</option>
+                <option value="">-- Selecciona una talla --</option>
                 <option value="s">S</option>
                 <option value="m">M</option>
                 <option value="xl">XL</option>
@@ -69,19 +70,20 @@
         </div>
 
         <!-- Color -->
-        <div class="col-md-3">
+        <div class="col-12">
             <label for="color" class="form-label">Color</label>
             <select name="color" id="color" class="form-select">
-                <option value="">--Selecciona un color--</option>
+                <option value="">-- Selecciona un color --</option>
                 <option value="rojo">Rojo</option>
                 <option value="azul">Azul</option>
                 <option value="verde">Verde</option>
             </select>
         </div>
 
-        <div class="col-md-6">
-            <label for="imagen" class="form-label">Url imagen</label>
-            <input type="text" class="form-control" name="imagen" id="nombre" >
+        <!-- Imagen -->
+        <div class="col-12">
+            <label for="imagen" class="form-label">URL imagen</label>
+            <input type="text" class="form-control" name="imagen" id="imagen">
         </div>
 
         <!-- Botón Crear -->
@@ -91,6 +93,6 @@
     </form>
 </main>
 
-<%@ include file ="/WEB-INF/jsp/fragmentos/footer.jspf"%>
+<%@ include file="/WEB-INF/jsp/fragmentos/footer.jspf"%>
 </body>
 </html>

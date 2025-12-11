@@ -37,7 +37,7 @@
                     <form action="<%= request.getContextPath() %>/tienda/carrito/anadir" method="post">
                         <input type="hidden" name="idProducto" value="<%= prod.getId_producto() %>"/>
                         <input type="number" name="cantidad" value="1" min="1" class="form-control mb-2" style="width:80px;">
-                        <button type="submit" class="btn btn-primary w-100">Comprar</button>
+                        <button type="submit" class="btn btn-primary w-100">Añadir al carrito</button>
                     </form>
                 </div>
             </div>

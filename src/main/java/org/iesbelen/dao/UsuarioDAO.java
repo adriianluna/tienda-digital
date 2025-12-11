@@ -14,6 +14,8 @@ public interface UsuarioDAO {
     void delete(int idUsuario);
     public Optional<Usuario> findPorNombreYPassword(String nombre, String password);
 
-
+    //Validaciones
+    boolean existeNombre(String nombre);
+    boolean existeEmail(String email);
 
 }

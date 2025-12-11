@@ -11,6 +11,14 @@ public class Producto {
     public String talla;
     public String color;
     public String imagen;
+    private Categoria categoria;
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
 
     public String getImagen() {
         return imagen;

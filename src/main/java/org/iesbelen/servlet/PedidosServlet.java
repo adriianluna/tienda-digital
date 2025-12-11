@@ -26,8 +26,7 @@ public class PedidosServlet extends HttpServlet {
         Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("usuario-logado");
 
         if (pathInfo == null || "/".equals(pathInfo)) {
-            // Listar pedidos
-            String filtro = request.getParameter("filtro"); // obtienes el filtro del buscador
+
             List<Pedido> listaPedidos;
 
             if ("admin".equalsIgnoreCase(usuarioLogado.getRol())) {
@@ -44,9 +43,8 @@ public class PedidosServlet extends HttpServlet {
             pathInfo = pathInfo.replaceAll("/$", "");
             String[] pathParts = pathInfo.split("/");
 
-            // --------------------------------------------------------
-            // ORIGINAL: /tienda/pedidos/{id} → ver detalle
-            // --------------------------------------------------------
+
+            // /tienda/pedidos/{id}ver detalle
             if (pathParts.length == 2) {
                 try {
                     int idPedido = Integer.parseInt(pathParts[1]);
@@ -58,6 +56,7 @@ public class PedidosServlet extends HttpServlet {
                         listaDetalles = (List<DetallePedido>) request.getSession()
                                 .getAttribute("listaDetallePedidoSesion");
 
+                        //Si estan en la sesion es porue ya hemos hecho un checkout
                         if (listaDetalles != null) {
                             request.getSession().removeAttribute("listaDetallePedidoSesion");
                         } else {
@@ -89,17 +88,12 @@ public class PedidosServlet extends HttpServlet {
                 dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/pedidos/pedido.jsp");
             }
 
-
-
-            // --------------------------------------------------------
-            // NUEVO: /tienda/pedidos/eliminar/{id}
-            // --------------------------------------------------------
+            // /tienda/pedidos/eliminar/{id}
             if (pathParts.length == 3 && "eliminar".equals(pathParts[1])) {
                 try {
                     int idEliminar = Integer.parseInt(pathParts[2]);
                     pedidoDAO.delete(idEliminar);
 
-                    // Redirigir después de eliminar
                     response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
                     return;
 
@@ -110,9 +104,7 @@ public class PedidosServlet extends HttpServlet {
                 }
             }
 
-            // --------------------------------------------------------
-            // NUEVO: /tienda/pedidos/editar/{id}
-            // --------------------------------------------------------
+            // /tienda/pedidos/editar/{id}
             if (pathParts.length == 3 && "editar".equals(pathParts[1])) {
                 try {
                     int idEditar = Integer.parseInt(pathParts[2]);
@@ -141,7 +133,7 @@ public class PedidosServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    @Override
+   /* @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -162,6 +154,62 @@ public class PedidosServlet extends HttpServlet {
 
             response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
         }
+    }*/
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String __method__ = request.getParameter("__method__");
+        if ("put".equalsIgnoreCase(__method__)) {
+
+            doPut(request, response);
+        } else if ("delete".equalsIgnoreCase(__method__)) {
+
+            doDelete(request, response);
+        } else {
+            System.out.println("Opción POST no soportada para pedidos.");
+        }
     }
 
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String idPedidoStr = request.getParameter("id_pedido");
+        String estado = request.getParameter("estado");
+
+        if (idPedidoStr != null && estado != null) {
+            try {
+                int idPedido = Integer.parseInt(idPedidoStr);
+                PedidosDAO pedidoDAO = new PedidosDAOImpl();
+                Pedido pedido = pedidoDAO.find(idPedido).orElse(null);
+
+                if (pedido != null) {
+                    pedido.setEstado(estado);
+                    pedidoDAO.update(pedido);
+                }
+
+            } catch (NumberFormatException nfe) {
+                nfe.printStackTrace();
+            }
+        }
+
+        response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
+    }
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+    {
+        RequestDispatcher dispatcher;
+        PedidosDAO pedidosDAO = new PedidosDAOImpl();
+        String codigo = request.getParameter("id_pedido");
+
+        try {
+            int id = Integer.parseInt(codigo);
+
+            pedidosDAO.delete(id);
+
+        } catch (NumberFormatException nfe) {
+            nfe.printStackTrace();
+        }
+    }
 }

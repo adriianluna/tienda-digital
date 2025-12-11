@@ -51,18 +51,16 @@ public class CarritoServlet extends HttpServlet {
 
             Producto prod = productoDAO.find(idProducto).orElse(null);
 
+            //Si esta ya existe el producto aumenta la cantidad
             if (prod != null) {
-                boolean encontrado = false;
+                CarritoItem itemExistente = listaItems.stream()
+                        .filter(item -> item.getProducto().getId_producto() == idProducto)
+                        .findFirst()
+                        .orElse(null);
 
-                for (CarritoItem item : listaItems) {
-                    if (item.getProducto().getId_producto() == idProducto) {
-                        item.setCantidad(item.getCantidad() + cantidad);
-                        encontrado = true;
-                        break;
-                    }
-                }
-
-                if (!encontrado) {
+                if (itemExistente != null) {
+                    itemExistente.setCantidad(itemExistente.getCantidad() + cantidad);
+                } else {
                     listaItems.add(new CarritoItem(prod, cantidad));
                 }
             }
@@ -112,7 +110,7 @@ public class CarritoServlet extends HttpServlet {
             pedido.setTotal(total);
 
             PedidosDAO pedidoDAO = new PedidosDAOImpl();
-            pedidoDAO.create(pedido); // Esto genera el id_pedido automáticamente
+            pedidoDAO.create(pedido);
 
             // Crear los detalles del pedido
             DetallePedidoDAO detalleDAO = new DetallePedidoDAOImpl();
@@ -123,13 +121,14 @@ public class CarritoServlet extends HttpServlet {
                 detalle.setId_producto(item.getProducto().getId_producto());
                 detalle.setCantidad(item.getCantidad());
                 detalle.setPrecio_unitario(item.getProducto().getPrecio());
-                detalle.setNombreProducto(item.getProducto().getNombre()); // <-- opcional para mostrar
+                detalle.setNombreProducto(item.getProducto().getNombre()); //
                 detalleDAO.create(detalle);
 
-                listaDetalles.add(detalle); // Guardar en lista temporal
+                // Guardar en lista temporal
+                listaDetalles.add(detalle);
             }
 
-            // Guardar lista en sesión solo para mostrar detalle inmediatamente
+            // Guardar lista en sesión solo para mostrarla
             request.getSession().setAttribute("listaDetallePedidoSesion", listaDetalles);
             // Vaciar el carrito
             request.getSession().removeAttribute("carrito");

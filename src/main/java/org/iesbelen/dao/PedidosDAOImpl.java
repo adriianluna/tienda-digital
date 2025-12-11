@@ -2,7 +2,6 @@ package org.iesbelen.dao;
 
 import org.iesbelen.model.Pedido;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -141,12 +140,11 @@ public class PedidosDAOImpl extends AbstractDAOImpl implements PedidosDAO {
 
         try {
             conn = connectDB();
-            String sql = "UPDATE pedidos SET estado = ?, total = ? WHERE id_pedido = ?";
+            String sql = "UPDATE pedidos SET estado = ? WHERE id_pedido = ?";
             ps = conn.prepareStatement(sql);
 
             ps.setString(1, pedido.getEstado());
-            ps.setDouble(2, pedido.getTotal());
-            ps.setInt(3, pedido.getId_pedido());
+            ps.setInt(2, pedido.getId_pedido());
 
             ps.executeUpdate();
 
