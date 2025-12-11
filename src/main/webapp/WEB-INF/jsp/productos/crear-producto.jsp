@@ -79,6 +79,11 @@
             </select>
         </div>
 
+        <div class="col-md-6">
+            <label for="imagen" class="form-label">Url imagen</label>
+            <input type="text" class="form-control" name="imagen" id="nombre" >
+        </div>
+
         <!-- Botón Crear -->
         <div class="col-12">
             <button type="submit" class="btn btn-success">Crear Producto</button>

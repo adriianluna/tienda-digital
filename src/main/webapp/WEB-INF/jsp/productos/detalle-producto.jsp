@@ -104,6 +104,15 @@
             <input value="<%= prod.getColor() %>" readonly="readonly"/>
         </div>
     </div>
+</div>
+<div style="margin-top: 6px;" class="clearfix">
+    <div style="float: left;width: 50%">
+        <label>Url imagen</label>
+    </div>
+    <div style="float: none;width: auto;overflow: hidden;">
+        <input value="<%= prod.getImagen() %>" readonly="readonly"/>
+    </div>
+</div>
 
 
 

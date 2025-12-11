@@ -39,6 +39,7 @@
                 <th scope="col">Categoría</th>
                 <th scope="col">Talla</th>
                 <th scope="col">Color</th>
+                <th scope="col">Imagen</th>
                 <th scope="col">Acciones</th>
             </tr>
             </thead>
@@ -55,6 +56,7 @@
                 <td><%= producto.getId_categoria() %></td>
                 <td><%= producto.getTalla() %></td>
                 <td><%= producto.getColor() %></td>
+                <td><%= producto.getImagen() %></td>
                 <td>
                     <div class="d-flex gap-1">
                         <form action="${pageContext.request.contextPath}/tienda/productos/<%= producto.getId_producto() %>" method="get">

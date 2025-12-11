@@ -24,8 +24,8 @@
         %>
 
             <div class="card h-100">
-                <img src="https://via.placeholder.com/300x200"
-                     class="card-img-top" style="object-fit: cover; height:200px;">
+                <img src="<%= prod.getImagen() %>"
+                     class="card-img-top imagen-producto">
                 <div class="card-body">
                     <h5 class="card-title"><%= prod.getNombre() %></h5>
                     <p class="card-text">Precio: <%= prod.getPrecio() %>€ </p>

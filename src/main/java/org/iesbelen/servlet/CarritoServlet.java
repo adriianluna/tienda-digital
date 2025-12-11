@@ -153,31 +153,54 @@ public class CarritoServlet extends HttpServlet {
 
         String pathInfo = request.getPathInfo();
         List<CarritoItem> listaItems = (List<CarritoItem>) request.getSession().getAttribute("carrito");
+
         if (listaItems == null) {
             listaItems = new ArrayList<>();
         }
 
         if ("/anadir".equals(pathInfo)) {
+
             int idProducto = Integer.parseInt(request.getParameter("idProducto"));
             int cantidad = Integer.parseInt(request.getParameter("cantidad"));
 
             Producto prod = productoDAO.find(idProducto).orElse(null);
+
             if (prod != null) {
-                listaItems.add(new CarritoItem(prod, cantidad));
+
+                boolean encontrado = false;
+
+                // Verificar si ya está en el carrito
+                for (CarritoItem item : listaItems) {
+                    if (item.getProducto().getId_producto() == idProducto) {
+                        item.setCantidad(item.getCantidad() + cantidad);
+                        encontrado = true;
+                        break;
+                    }
+                }
+
+                // Si no estaba, añadir nuevo
+                if (!encontrado) {
+                    listaItems.add(new CarritoItem(prod, cantidad));
+                }
             }
+
+            // Guardar carrito actualizado
+            request.getSession().setAttribute("carrito", listaItems);
             response.sendRedirect(request.getContextPath());
-        } else if ("/eliminar".equals(pathInfo)) {
-            int idProducto = Integer.parseInt(request.getParameter("idProducto"));
-            // eliminar el producto de la lista
-            listaItems.removeIf(item -> item.getProducto().getId_producto() == idProducto);
-            // Redirigir a la página del carrito
-            response.sendRedirect(request.getContextPath() + "/tienda/carrito");
+            return;
         }
 
-        // Guardar la lista de nuevo en la sesión
-        request.getSession().setAttribute("carrito", listaItems);
+        if ("/eliminar".equals(pathInfo)) {
 
+            int idProducto = Integer.parseInt(request.getParameter("idProducto"));
 
+            listaItems.removeIf(item -> item.getProducto().getId_producto() == idProducto);
+
+            request.getSession().setAttribute("carrito", listaItems);
+            response.sendRedirect(request.getContextPath() + "/tienda/carrito");
+            return;
+        }
     }
+
 
 }

@@ -97,6 +97,7 @@ public class ProductosServlet extends HttpServlet {
             nuevoProducto.setId_categoria(Integer.parseInt(request.getParameter("categoria")));
             nuevoProducto.setTalla(request.getParameter("talla"));
             nuevoProducto.setColor((request.getParameter("color")));
+            nuevoProducto.setImagen((request.getParameter("imagen")));
             productoDAO.create(nuevoProducto);
 
         } else if ("put".equalsIgnoreCase(__method__)) {
@@ -132,6 +133,7 @@ public class ProductosServlet extends HttpServlet {
             producto.setId_categoria(Integer.parseInt(request.getParameter("categoria")));
             producto.setTalla(request.getParameter("talla"));
             producto.setColor((request.getParameter("color")));
+            producto.setImagen((request.getParameter("imagen")));
             productoDAO.update(producto);
 
         } catch (NumberFormatException nfe) {

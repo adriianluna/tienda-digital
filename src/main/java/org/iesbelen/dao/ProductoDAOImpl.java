@@ -17,7 +17,7 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
 
         try {
             conn = connectDB();
-            ps = conn.prepareStatement("INSERT INTO productos (nombre,descripcion,precio,stock,id_categoria,talla,color) VALUES (?,?,?,?,?,?,?)"
+            ps = conn.prepareStatement("INSERT INTO productos (nombre,descripcion,precio,stock,id_categoria,talla,color,url_imagen) VALUES (?,?,?,?,?,?,?,?)"
                     , Statement.RETURN_GENERATED_KEYS);
 
             int idx = 1;
@@ -29,10 +29,11 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
             ps.setInt(idx++,producto.getId_categoria());
             ps.setString(idx++, producto.getTalla());
             ps.setString(idx++, producto.getColor());
+            ps.setString(idx++, producto.getImagen());
 
             int rows = ps.executeUpdate();
             if (rows == 0)
-                System.out.println("INSERT de fabricante con 0 filas insertadas.");
+                System.out.println("INSERT de prod con 0 filas insertadas.");
 
             rsGenKeys = ps.getGeneratedKeys();
             if (rsGenKeys.next())
@@ -72,7 +73,8 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
                 prod.setStock(rs.getInt(idx++));
                 prod.setId_categoria(rs.getInt(idx++));
                 prod.setTalla(rs.getString(idx++));
-                prod.setColor(rs.getString(idx));
+                prod.setColor(rs.getString(idx++));
+                prod.setImagen(rs.getString(idx));
                 listProd.add(prod);
             }
 
@@ -114,6 +116,7 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
                 prod.setId_categoria(rs.getInt(idx++));
                 prod.setTalla(rs.getString(idx++));
                 prod.setColor(rs.getString(idx++));
+                prod.setImagen(rs.getString(idx++));
 
 
                 return Optional.of(prod);
@@ -140,15 +143,16 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
         try {
             conn = connectDB();
 
-            ps = conn.prepareStatement("UPDATE productos SET nombre = ?,precio = ?,stock = ?,talla = ?,color= ?  WHERE id_Producto = ?");
+            ps = conn.prepareStatement("UPDATE productos SET nombre = ?,precio = ?,descripcion= ?,stock = ?,talla = ?,color= ?,url_imagen= ?  WHERE id_Producto = ?");
             int idx = 1;
             ps.setString(idx++, producto.getNombre());
             ps.setDouble(idx++, producto.getPrecio());
+            ps.setString(idx++, producto.getDescripcion());
             ps.setInt(idx++, producto.getStock());
             ps.setString(idx++, producto.getTalla());
             ps.setString(idx++, producto.getColor());
+            ps.setString(idx++, producto.getImagen());
             ps.setInt(idx, producto.getId_producto());
-
 
             int rows = ps.executeUpdate();
 
@@ -221,6 +225,7 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
                 prod.setId_categoria(rs.getInt(idx));
                 prod.setTalla(rs.getString(idx++));
                 prod.setColor(rs.getString(idx++));
+                prod.setImagen(rs.getString(idx++));
                 productos.add(prod);
             }
 

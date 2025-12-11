@@ -10,6 +10,15 @@ public class Producto {
     public int id_categoria;
     public String talla;
     public String color;
+    public String imagen;
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
 
     public int getId_producto() {
         return id_producto;

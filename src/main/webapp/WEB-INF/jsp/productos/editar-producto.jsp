@@ -55,27 +55,34 @@
         <div class="col-md-3">
             <label class="form-label">Talla</label>
             <select name="talla" class="form-select">
-                <option value="">--Selecciona una talla--</option>
+                <option value="" <%= (prod.getTalla() == null || prod.getTalla().isEmpty()) ? "selected" : "" %>>--Selecciona una talla--</option>
                 <option value="s" <%= "s".equals(prod.getTalla()) ? "selected" : "" %>>S</option>
                 <option value="m" <%= "m".equals(prod.getTalla()) ? "selected" : "" %>>M</option>
                 <option value="xl" <%= "xl".equals(prod.getTalla()) ? "selected" : "" %>>XL</option>
             </select>
+
         </div>
 
         <div class="col-md-3">
             <label class="form-label">Color</label>
             <select name="color" class="form-select">
-                <option value="">--Selecciona un color--</option>
+                <option value="" <%= (prod.getColor() == null || prod.getColor().isEmpty()) ? "selected" : "" %>>--Selecciona un color--</option>
                 <option value="rojo" <%= "rojo".equals(prod.getColor()) ? "selected" : "" %>>Rojo</option>
                 <option value="azul" <%= "azul".equals(prod.getColor()) ? "selected" : "" %>>Azul</option>
                 <option value="verde" <%= "verde".equals(prod.getColor()) ? "selected" : "" %>>Verde</option>
             </select>
-        </div>
 
+        </div>
+        <div class="col-md-6">
+            <label class="form-label">Url imagen</label>
+            <input type="text" class="form-control" name="imagen" value="<%= prod.getImagen() %>">
+        </div>
         <div class="col-12 mt-3">
             <button type="submit" class="btn btn-success">Guardar Cambios</button>
             <a href="${pageContext.request.contextPath}/tienda/productos" class="btn btn-secondary ms-2">Cancelar</a>
         </div>
+
+
 
         <%
             } else {
