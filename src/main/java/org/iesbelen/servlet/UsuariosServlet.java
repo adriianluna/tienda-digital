@@ -24,7 +24,6 @@ public class UsuariosServlet extends HttpServlet {
         RequestDispatcher dispatcher;
         String pathInfo = request.getPathInfo();
 
-
         if (pathInfo == null || "/".equals(pathInfo)) {
             UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
             List<Usuario> listaUsuario = usuarioDAO.getAll();
@@ -36,37 +35,39 @@ public class UsuariosServlet extends HttpServlet {
             pathInfo = pathInfo.replaceAll("/$", "");
             String[] pathParts = pathInfo.split("/");
 
-            if (pathParts.length == 2 && "crear".equals(pathParts[1])) {
+            // RUTA PARA MOSTRAR LOGIN
+            if (pathParts.length == 2 && "login".equals(pathParts[1])) {
+                dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/usuarios/login.jsp");
 
+                // RUTA PARA LOGOUT
+            } else if (pathParts.length == 2 && "logout".equals(pathParts[1])) {
+                request.getSession().invalidate();
+                response.sendRedirect(request.getContextPath() + "/tienda/usuarios/login");
+                return;
 
+            } else if (pathParts.length == 2 && "crear".equals(pathParts[1])) {
                 dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/usuarios/crear-usuario.jsp");
 
-            }else if(pathParts.length == 2 ){
+            } else if(pathParts.length == 2 ){
                 UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
-
                 try {
                     request.setAttribute("usuario",
                             usuarioDAO.find(Integer.parseInt(pathParts[1])).orElse(null));
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/usuarios/detalle-usuario.jsp");
-
                 } catch (NumberFormatException nfe) {
                     nfe.printStackTrace();
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/usuarios/usuario.jsp");
                 }
-            }
-
-            else if (pathParts.length == 3 && "editar".equals(pathParts[1])) {
+            } else if (pathParts.length == 3 && "editar".equals(pathParts[1])) {
                 UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
                 try {
                     request.setAttribute("usuario",
                             usuarioDAO.find(Integer.parseInt(pathParts[2])).orElse(null));
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/usuarios/editar-usuario.jsp");
-
                 } catch (NumberFormatException nfe) {
                     nfe.printStackTrace();
                     dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/usuarios/usuario.jsp");
                 }
-
             } else {
                 dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/usuarios/usuario.jsp");
             }
@@ -76,28 +77,85 @@ public class UsuariosServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         String __method__ = request.getParameter("__method__");
         UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
         String pathInfo = request.getPathInfo();
 
+        // PROCESAR LOGIN
+        if (pathInfo != null && pathInfo.equals("/login")) {
+            String nombreUsuario = request.getParameter("usuario");
+            String password = request.getParameter("password");
+
+            try {
+                // Hashear la contraseña ingresada
+                String passwordHash = Utilidades.hashPassword(password);
+
+                // Buscar usuario por nombre y contraseña hasheada
+                java.util.Optional<Usuario> usuarioOpt = usuarioDAO.findPorNombreYPassword(nombreUsuario, passwordHash);
+
+                if (usuarioOpt.isPresent()) {
+                    // Login exitoso
+                    Usuario usuario = usuarioOpt.get();
+                    request.getSession().setAttribute("usuario-logado", usuario);
+                    response.sendRedirect(request.getContextPath() + "/");
+                    return;
+                } else {
+                    // Login fallido
+                    request.setAttribute("error", "Usuario o contraseña incorrectos");
+                    request.getRequestDispatcher("/WEB-INF/jsp/usuarios/login.jsp").forward(request, response);
+                    return;
+                }
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                request.setAttribute("error", "Error en el sistema. Inténtalo más tarde.");
+                request.getRequestDispatcher("/WEB-INF/jsp/usuarios/login.jsp").forward(request, response);
+                return;
+            }
+        }
+
+        // RESTO DEL CÓDIGO (crear, editar, eliminar usuarios)
         if (__method__ == null) {
+
             Usuario nuevoUsuario = new Usuario();
             nuevoUsuario.setNombre(request.getParameter("nombre"));
             nuevoUsuario.setEmail(request.getParameter("email"));
-            //Hash para la contraseña
+
             try {
                 String hash = Utilidades.hashPassword(request.getParameter("password"));
                 nuevoUsuario.setPassword(hash);
             } catch (NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
-            //nuevoUsuario.setPassword(request.getParameter("password"));
-            nuevoUsuario.setRol(request.getParameter("rol"));
+
+            // Si no viene rol o está vacío, asignar "cliente" por defecto
+            String rol = request.getParameter("rol");
+            if (rol == null || rol.trim().isEmpty()) {
+                rol = "cliente";
+            }
+            nuevoUsuario.setRol(rol);
+
+            // Crear usuario en la base de datos
             usuarioDAO.create(nuevoUsuario);
+            System.out.println("pathInfo = " + pathInfo);
+            System.out.println("nombre = " + request.getParameter("nombre"));
+            // NUEVA LÓGICA: Decidir a dónde redirigir
+            Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuario-logado");
+
+            if (usuarioLogueado == null) {
+                // No hay nadie logueado = registro público
+                // Loguear automáticamente al nuevo usuario
+                request.getSession().setAttribute("usuario-logado", nuevoUsuario);
+                response.sendRedirect(request.getContextPath() + "/");
+                return;
+            } else {
+                // Hay un admin logueado creando el usuario
+                // Volver a la lista de usuarios
+                response.sendRedirect(request.getContextPath() + "/tienda/usuarios");
+                return;
+            }
 
         } else if ("put".equalsIgnoreCase(__method__)) {
             doPut(request, response);
@@ -110,7 +168,8 @@ public class UsuariosServlet extends HttpServlet {
         } else {
             System.out.println("Opción POST no soportada.");
         }
-        response.sendRedirect(request.getContextPath() + "/tienda/usuarios");
+
+        //response.sendRedirect(request.getContextPath() + "/tienda/usuarios");
     }
 
     @Override

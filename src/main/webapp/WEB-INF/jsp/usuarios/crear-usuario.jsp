@@ -1,83 +1,88 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: adria
-  Date: 23/11/2025
-  Time: 10:12
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-
-    <title>Title</title>
+    <title>Crear Usuario</title>
     <link rel="stylesheet" type="text/css" href="<%=application.getContextPath()%>/style.css">
 </head>
 <body>
 <%@ include file="/WEB-INF/jsp/fragmentos/header.jspf" %>
 <%@ include file="/WEB-INF/jsp/fragmentos/nav.jspf" %>
-<div id="contenedora" style="float:none; margin: 0 auto;width: 900px;" >
-    <form action="${pageContext.request.contextPath}/tienda/usuarios/crear/" method="post">
+
+<div id="contenedora" style="float:none; margin: 0 auto;width: 900px;">
+
+    <% if (request.getAttribute("error") != null) { %>
+    <div style="color: red; background-color: #ffe6e6; padding: 10px; margin: 10px 0;">
+        <%= request.getAttribute("error") %>
+    </div>
+    <% } %>
+
+    <!-- IMPORTANTE: La acción debe ser /tienda/usuarios SIN /crear -->
+    <form action="${pageContext.request.contextPath}/tienda/usuarios/crear" method="post">
+
         <div class="clearfix">
             <div style="float: left; width: 50%">
                 <h1>Crear Usuario</h1>
             </div>
             <div style="float: none;width: auto;overflow: hidden;min-height: 80px;position: relative;">
-
                 <div style="position: absolute; left: 39%; top : 39%;">
                     <input type="submit" value="Crear"/>
                 </div>
-
             </div>
         </div>
+
         <div class="clearfix">
             <hr/>
         </div>
 
+        <!-- IMPORTANTE: name="nombre" (no "usuario") -->
         <div style="margin-top: 6px;" class="clearfix">
             <div style="float: left;width: 50%">
-                Nombre
+                Nombre de usuario
             </div>
             <div style="float: none;width: auto;overflow: hidden;">
-                <input name="nombre" />
+                <input name="nombre" required />
             </div>
         </div>
+
         <div style="margin-top: 6px;" class="clearfix">
             <div style="float: left;width: 50%">
                 Email
             </div>
             <div style="float: none;width: auto;overflow: hidden;">
-                <input name="email" />
+                <input name="email" type="email" required />
             </div>
         </div>
+
         <div style="margin-top: 6px;" class="clearfix">
             <div style="float: left;width: 50%">
-                Password
+                Contraseña
             </div>
             <div style="float: none;width: auto;overflow: hidden;">
-                <input name="password" type="password"/>
+                <input name="password" type="password" required />
             </div>
         </div>
-        <%--Rol--%>
-       <div style="margin-top: 6px;" class="clearfix">
+
+        <!-- El rol es opcional, si no se pone será "cliente" por defecto -->
+        <div style="margin-top: 6px;" class="clearfix">
             <div style="float: left;width: 50%">
                 Rol
             </div>
             <div style="float: none;width: auto;overflow: hidden;">
-                <div>
-                    <select name="rol" id="rol">
-                        <option value="">-- Selecciona una rol --</option>
-
-                        <option value="admin">Administrador</option>
-                        <option value="cliente">Cliente</option>
-                    </select>
-                 </div>
+                <select name="rol">
+                    <option value="cliente">Cliente</option>
+                    <option value="admin">Administrador</option>
+                </select>
             </div>
-       </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <p>¿Ya tienes cuenta?
+                <a href="${pageContext.request.contextPath}/tienda/usuarios/login">Inicia sesión aquí</a>
+            </p>
+        </div>
     </form>
 </div>
 
-<%@ include file ="/WEB-INF/jsp/fragmentos/footer.jspf"%>
-
+<%@ include file="/WEB-INF/jsp/fragmentos/footer.jspf"%>
 </body>
 </html>

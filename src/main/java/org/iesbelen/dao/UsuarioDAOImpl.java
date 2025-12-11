@@ -76,12 +76,11 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
 
         Connection conn = null;
         PreparedStatement ps = null;
-        ResultSet rs = null;
         ResultSet rsGenKeys = null;
 
         try {
             conn = connectDB();
-            ps = conn.prepareStatement("INSERT INTO usuarios (nombre,email, password, rol) VALUES (?, ?, ?, ?)",
+            ps = conn.prepareStatement("INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
 
             int idx = 1;
@@ -89,20 +88,27 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
             ps.setString(idx++, usuario.getEmail());
             ps.setString(idx++, usuario.getPassword());
             ps.setString(idx++, usuario.getRol());
-            ps.executeUpdate();
 
+            // Solo ejecutar UNA VEZ
             int rows = ps.executeUpdate();
-            if (rows == 0)
-                System.out.println("INSERT de usuarios con 0 filas insertadas.");
 
+            if (rows == 0) {
+                System.out.println("INSERT de usuarios con 0 filas insertadas.");
+            } else {
+                System.out.println("Usuario creado correctamente. Filas insertadas: " + rows);
+            }
+
+            // Obtener el ID generado
             rsGenKeys = ps.getGeneratedKeys();
-            if (rsGenKeys.next())
+            if (rsGenKeys.next()) {
                 usuario.setId_usuario(rsGenKeys.getInt(1));
+            }
 
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            System.out.println("Error al crear usuario: " + e.getMessage());
         } finally {
-            closeDb(conn, ps, null);
+            closeDb(conn, ps, rsGenKeys);
         }
     }
 
@@ -153,7 +159,7 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
 
         try {
             conn = connectDB();
-            String sql = "SELECT * FROM usuarios WHERE usuario = ? AND password = ?";
+            String sql = "SELECT * FROM usuarios WHERE nombre = ? AND password = ?";
             ps = conn.prepareStatement(sql);
 
             //  guarda contraseña hasheada:
@@ -168,6 +174,7 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
                 int idx = 1;
                 usuario.setId_usuario(rs.getInt(idx++));
                 usuario.setNombre(rs.getString(idx++));
+                usuario.setEmail(rs.getString(idx++));
                 usuario.setPassword(rs.getString(idx++));
                 usuario.setRol(rs.getString(idx));
                 return Optional.of(usuario);

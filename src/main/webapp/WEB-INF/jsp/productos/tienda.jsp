@@ -28,7 +28,7 @@
                      class="card-img-top" style="object-fit: cover; height:200px;">
                 <div class="card-body">
                     <h5 class="card-title"><%= prod.getNombre() %></h5>
-                    <p class="card-text">Precio: <%= prod.getPrecio() %>$ </p>
+                    <p class="card-text">Precio: <%= prod.getPrecio() %>€ </p>
                     <p class="card-text">Descripción: <%= prod.getDescripcion() %></p>
                     <p class="card-text">Talla: <%= prod.getTalla() %> </p>
                     <p class="card-text">Color: <%= prod.getColor() %> </p>

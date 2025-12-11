@@ -1,25 +1,34 @@
 <%@ page import="org.iesbelen.model.Usuario" %>
+<%
+    Usuario usuarioNav = (Usuario) session.getAttribute("usuario-logado");
+    boolean esAdmin = usuarioNav != null && "admin".equalsIgnoreCase(usuarioNav.getRol());
+%>
 <nav class="menu">
     <a href="<%=application.getContextPath()%>/">Tienda</a>
     <a href="<%=application.getContextPath()%>/index.jsp">HOME</a>
-    <a href="<%=application.getContextPath()%>/tienda/usuarios">Usuario</a>
-    <a href="<%=application.getContextPath()%>/tienda/productos">Producto</a>
+
+    <!-- Solo administradores ven estas opciones -->
+    <% if (esAdmin) { %>
+    <a href="<%=application.getContextPath()%>/tienda/usuarios">Usuarios</a>
+    <a href="<%=application.getContextPath()%>/tienda/productos">Productos</a>
     <a href="<%=application.getContextPath()%>/tienda/pedidos">Pedidos</a>
-    <a href="<%=application.getContextPath()%>/tienda/detallePedidos">Detalle pedidos</a>
+    <a href="<%=application.getContextPath()%>/tienda/detallePedidos">Detalle Pedidos</a>
+    <% } %>
+
+    <!-- Todos los usuarios logueados ven el carrito -->
+    <% if (usuarioNav != null) { %>
     <a href="<%=application.getContextPath()%>/tienda/carrito">Carrito</a>
+    <% } %>
 
-
-<%--<a href="<%=application.getContextPath()%>/tienda/usuarios">Usuarios</a>--%>
-   <%-- <div class="menu-log">
-        <a href="<%=application.getContextPath()%>/login">LOGIN</a>
-    </div>--%>
-    <%--<div class="menu-log">
-        <% if (session.getAttribute("usuario-logado") != null) {
-            Usuario usuario = (Usuario) session.getAttribute("usuario-logado"); %>
-        <p>Hola, <%=usuario.getUsuario() %></p>
-        <a href="${pageContext.request.contextPath}/tienda/usuarios/logout">LOGOUT</a> <% } else { %>
-        <a href="${pageContext.request.contextPath}/tienda/usuarios/login">LOGIN</a> <% } %>
-
-    </div>--%>
+    <!-- Login/Logout -->
+    <div class="menu-log">
+        <% if (usuarioNav != null) { %>
+        <p>Hola, <%= usuarioNav.getNombre() %>
+            <% if (esAdmin) { %><strong>(Admin)</strong><% } %>
+        </p>
+        <a href="<%=application.getContextPath()%>/tienda/usuarios/logout">LOGOUT</a>
+        <% } else { %>
+        <a href="<%=application.getContextPath()%>/tienda/usuarios/login">LOGIN</a>
+        <% } %>
+    </div>
 </nav>
-
