@@ -1,101 +1,28 @@
 package org.iesbelen.dao;
 
 import org.iesbelen.model.DetallePedido;
-import org.iesbelen.model.Usuario;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-public class DetallePedidoDAOImpl extends AbstractDAOImpl implements DetallePedidoDAO{
-    @Override
-    public List<DetallePedido> getAll() {
-
-        Connection conn = null;
-        Statement s = null;
-        ResultSet rs = null;
-        List<DetallePedido> listaDetalles = new ArrayList<>();
-
-        try {
-            conn = connectDB();
-            s = conn.createStatement();
-            rs = s.executeQuery("SELECT dp.id_detalle, dp.id_pedido, p.fecha, prod.nombre AS nombre_producto, " +
-                    "dp.cantidad, dp.precio_unitario " +
-                    "FROM detalle_pedido dp " +
-                    "JOIN pedidos p ON dp.id_pedido = p.id_pedido " +
-                    "JOIN productos prod ON dp.id_producto = prod.id_producto");
-
-            while (rs.next()) {
-                DetallePedido detallePedido = new DetallePedido();
-                int idx = 1;
-                detallePedido.setId_detalle(rs.getInt(idx++));
-                detallePedido.setId_pedido(rs.getInt(idx++));
-                detallePedido.setFechaPedido(rs.getString(idx++)); // si usas Date, rs.getDate(idx++)
-                detallePedido.setNombreProducto(rs.getString(idx++));
-                detallePedido.setCantidad(rs.getInt(idx++));
-                detallePedido.setPrecioUnidad(rs.getDouble(idx++));
-                listaDetalles.add(detallePedido);
-            }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            closeDb(conn, s, rs);
-        }
-        return listaDetalles;
-    }
+public class DetallePedidoDAOImpl extends AbstractDAOImpl implements DetallePedidoDAO {
 
     @Override
-    public Optional<DetallePedido> find(int id) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            conn = connectDB();
-            ps = conn.prepareStatement("SELECT * FROM detalle_pedido WHERE id_detalle = ?");
-            ps.setInt(1, id);
-            rs = ps.executeQuery();
-
-            if (rs.next()) {
-                DetallePedido detallePedido = new DetallePedido();
-                int idx = 1;
-                detallePedido.setId_detalle(rs.getInt(idx++));
-                detallePedido.setId_pedido(rs.getInt(idx++));
-                detallePedido.setId_producto(rs.getInt(idx++));
-                detallePedido.setCantidad(rs.getInt(idx++));
-                detallePedido.setPrecioUnidad(rs.getDouble(idx));
-                return Optional.of(detallePedido);
-            }
-
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            closeDb(conn, ps, rs);
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public void create(DetallePedido detallePedido) {
+    public synchronized void create(DetallePedido detalle) {
         Connection conn = null;
         PreparedStatement ps = null;
 
         try {
             conn = connectDB();
-            ps = conn.prepareStatement("INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad,precio_unitario) VALUES (?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS);
+            String sql = "INSERT INTO detalle_pedidos (id_pedido, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
+            ps = conn.prepareStatement(sql);
 
-            ps.setInt(1, detallePedido.getId_pedido());
-            ps.setInt(2, detallePedido.getId_producto());
-            ps.setInt(3, detallePedido.getCantidad());
-            ps.setDouble(4, detallePedido.getPrecioUnidad());
+            ps.setInt(1, detalle.getId_pedido());
+            ps.setInt(2, detalle.getId_producto());
+            ps.setInt(3, detalle.getCantidad());
+            ps.setDouble(4, detalle.getPrecio_unitario());
+
             ps.executeUpdate();
-
-            ResultSet rsGenKeys = ps.getGeneratedKeys();
-            if (rsGenKeys.next()) detallePedido.setId_detalle(rsGenKeys.getInt(1));
 
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -105,62 +32,57 @@ public class DetallePedidoDAOImpl extends AbstractDAOImpl implements DetallePedi
     }
 
     @Override
-    public void update(DetallePedido detallePedido) {
-
+    public List<DetallePedido> findByPedido(int idPedido) {
         Connection conn = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
+        List<DetallePedido> listaDetalles = new ArrayList<>();
 
         try {
             conn = connectDB();
+            String sql = "SELECT dp.*, p.nombre as nombre_producto " +
+                    "FROM detalle_pedidos dp " +
+                    "JOIN productos p ON dp.id_producto = p.id_producto " +
+                    "WHERE dp.id_pedido = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, idPedido);
+            rs = ps.executeQuery();
 
-            ps = conn.prepareStatement("UPDATE detalle_pedido SET cantidad = ?,precio_unitario = ?  WHERE id_detalle = ?");
-            int idx = 1;
-            ps.setInt(idx++, detallePedido.getCantidad());
-            ps.setDouble(idx++, detallePedido.getPrecioUnidad());
-            ps.setInt(idx, detallePedido.getId_detalle());
+            while (rs.next()) {
+                DetallePedido detalle = new DetallePedido();
+                detalle.setId_detalle(rs.getInt("id_detalle"));
+                detalle.setId_pedido(rs.getInt("id_pedido"));
+                detalle.setId_producto(rs.getInt("id_producto"));
+                detalle.setCantidad(rs.getInt("cantidad"));
+                detalle.setPrecio_unitario(rs.getDouble("precio_unitario"));
+                detalle.setNombreProducto(rs.getString("nombre_producto"));
+                listaDetalles.add(detalle);
+            }
 
-            int rows = ps.executeUpdate();
-
-            if (rows == 0)
-                System.out.println("Update de Detalle con 0 registros actualizados.");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             closeDb(conn, ps, rs);
         }
 
-
+        return listaDetalles;
     }
 
     @Override
-    public void delete(int idUsuario) {
+    public void delete(int id) {
         Connection conn = null;
         PreparedStatement ps = null;
-        ResultSet rs = null;
 
         try {
             conn = connectDB();
+            ps = conn.prepareStatement("DELETE FROM detalle_pedidos WHERE id_detalle = ?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
 
-            ps = conn.prepareStatement("DELETE FROM detalle_pedido WHERE id_detalle = ?");
-            int idx = 1;
-            ps.setInt(idx, idUsuario);
-
-            int rows = ps.executeUpdate();
-
-            if (rows == 0)
-                System.out.println("Delete de detalle con 0 registros eliminados.");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
-            closeDb(conn, ps, rs);
+            closeDb(conn, ps, null);
         }
-
     }
 }

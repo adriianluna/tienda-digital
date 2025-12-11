@@ -11,7 +11,7 @@ public interface PedidosDAO {
 
     List<Pedido> getAll();
     Optional<Pedido> find(int id);
-    void create(Pedido pedido);
+    List<Pedido> findByUsuario(int idUsuario);
     void update(Pedido pedido);
     void delete(int idPedido);
 

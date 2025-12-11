@@ -72,38 +72,11 @@ public class PedidosDAOImpl extends AbstractDAOImpl implements PedidosDAO {
         return Optional.empty();
     }
 
-    /*@Override
-    public Optional<Pedido> find(int id) {
-        return Optional.empty();
-    }*/
-
     @Override
-    public synchronized void create(Pedido pedido) {
-        Connection conn = null;
-        PreparedStatement ps = null;
-
-        try {
-            conn = connectDB();
-            ps = conn.prepareStatement("INSERT INTO pedidos (id_usuario,fecha, estado,total) VALUES (?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS);
-
-            ps.setInt(1, pedido.getId_usuario());
-            ps.setString(2, pedido.getFecha());
-            ps.setString(3, pedido.getEstado());
-            ps.setDouble(4, pedido.getTotal());
-            ps.executeUpdate();
-
-            ResultSet rsGenKeys = ps.getGeneratedKeys();
-            if (rsGenKeys.next()) pedido.setId_pedido(rsGenKeys.getInt(1));
-
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            closeDb(conn, ps, null);
-        }
-
+    public List<Pedido> findByUsuario(int idUsuario) {
+        return List.of();
     }
-
+    
     @Override
     public synchronized void update(Pedido pedido) {
 

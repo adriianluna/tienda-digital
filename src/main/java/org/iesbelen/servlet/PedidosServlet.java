@@ -91,7 +91,7 @@ public class PedidosServlet extends HttpServlet {
             nuevoPedido.setFecha(request.getParameter("fecha"));
             nuevoPedido.setEstado(request.getParameter("estado"));
             nuevoPedido.setTotal(Double.parseDouble(request.getParameter("total")));
-            pedidosDAO.create(nuevoPedido);
+            //pedidosDAO.create(nuevoPedido);
 
         } else if ("put".equalsIgnoreCase(__method__)) {
             doPut(request, response);

@@ -56,8 +56,10 @@
             <label class="form-label">Talla</label>
             <select name="talla" class="form-select">
                 <option value="" <%= (prod.getTalla() == null || prod.getTalla().isEmpty()) ? "selected" : "" %>>--Selecciona una talla--</option>
+                <option value="s" <%= "s".equals(prod.getTalla()) ? "selected" : "" %>>XS</option>
                 <option value="s" <%= "s".equals(prod.getTalla()) ? "selected" : "" %>>S</option>
                 <option value="m" <%= "m".equals(prod.getTalla()) ? "selected" : "" %>>M</option>
+                <option value="m" <%= "m".equals(prod.getTalla()) ? "selected" : "" %>>L</option>
                 <option value="xl" <%= "xl".equals(prod.getTalla()) ? "selected" : "" %>>XL</option>
             </select>
 
