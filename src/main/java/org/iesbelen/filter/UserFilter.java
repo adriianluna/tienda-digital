@@ -15,7 +15,6 @@ import java.io.IOException;
         urlPatterns = {
                 "/tienda/usuarios/*",
                 "/tienda/productos/*",
-                /*"/tienda/pedidos/*",*/
                 "/tienda/detallePedidos/*"
         },
         initParams = {
@@ -38,12 +37,10 @@ public class UserFilter extends HttpFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         HttpSession session = httpRequest.getSession(false);
 
-        String servletPath = httpRequest.getServletPath(); // ← Importante
+        String servletPath = httpRequest.getServletPath();
         String pathInfo = httpRequest.getPathInfo();
         Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuario-logado") : null;
 
-        // --- RUTAS PÚBLICAS ---
-        // --- RUTAS PÚBLICAS (incluye /crear) ---
         if (servletPath.startsWith("/tienda/usuarios") &&
                 ("/login".equals(pathInfo) ||
                         "/logout".equals(pathInfo) ||
@@ -52,7 +49,6 @@ public class UserFilter extends HttpFilter implements Filter {
             return;
         }
 
-// --- NO LOGUEADO --- (solo redirige si no es ruta pública)
         if (usuario == null) {
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/tienda/usuarios/login");
             return;
@@ -61,16 +57,16 @@ public class UserFilter extends HttpFilter implements Filter {
 
         String rol = usuario.getRol();
 
-        // --- ADMIN TIENE ACCESO TOTAL ---
+
         if ("admin".equalsIgnoreCase(rol)) {
             chain.doFilter(request, response);
             return;
         }
 
-        // --- CLIENTE ---
+
         if ("cliente".equalsIgnoreCase(rol)) {
 
-            // CLIENTE puede entrar solo a pedidos y detallePedidos
+            // cliente puede entrar solo a pedidos y detallePedidos
             boolean puedeEntrarCliente =
                     servletPath.startsWith("/tienda/pedidos") ||
                             servletPath.startsWith("/tienda/detalle-pedidos");
@@ -80,12 +76,10 @@ public class UserFilter extends HttpFilter implements Filter {
                 return;
             }
 
-            // Si es cliente y NO está permitido →
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado");
             return;
         }
 
-        // Para roles desconocidos (opcional)
         httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso no permitido");
     }
 

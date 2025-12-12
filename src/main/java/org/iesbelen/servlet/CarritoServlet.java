@@ -44,7 +44,7 @@ public class CarritoServlet extends HttpServlet {
             listaItems = new ArrayList<>();
         }
 
-        // AÑADIR PRODUCTO AL CARRITO
+
         if ("/anadir".equals(pathInfo)) {
             int idProducto = Integer.parseInt(request.getParameter("idProducto"));
             int cantidad = Integer.parseInt(request.getParameter("cantidad"));
@@ -70,7 +70,7 @@ public class CarritoServlet extends HttpServlet {
             return;
         }
 
-        // ELIMINAR PRODUCTO DEL CARRITO
+
         if ("/eliminar".equals(pathInfo)) {
             int idProducto = Integer.parseInt(request.getParameter("idProducto"));
             listaItems.removeIf(item -> item.getProducto().getId_producto() == idProducto);
@@ -80,29 +80,29 @@ public class CarritoServlet extends HttpServlet {
             return;
         }
 
-        // FINALIZAR COMPRA (CHECKOUT)
+
         if ("/checkout".equals(pathInfo)) {
             Usuario usuarioLogado = (Usuario) request.getSession().getAttribute("usuario-logado");
 
             if (usuarioLogado == null) {
-                // Si no está logueado, redirigir al login
+
                 response.sendRedirect(request.getContextPath() + "/tienda/usuarios/login");
                 return;
             }
 
             if (listaItems.isEmpty()) {
-                // Si el carrito está vacío, volver al carrito
+
                 response.sendRedirect(request.getContextPath() + "/tienda/carrito");
                 return;
             }
 
-            // Calcular el total
+
             double total = 0;
             for (CarritoItem item : listaItems) {
                 total += item.getTotal();
             }
 
-            // Crear el pedido
+
             Pedido pedido = new Pedido();
             pedido.setId_usuario(usuarioLogado.getId_usuario());
             pedido.setFecha(LocalDateTime.now());
@@ -112,7 +112,7 @@ public class CarritoServlet extends HttpServlet {
             PedidosDAO pedidoDAO = new PedidosDAOImpl();
             pedidoDAO.create(pedido);
 
-            // Crear los detalles del pedido
+
             DetallePedidoDAO detalleDAO = new DetallePedidoDAOImpl();
             List<DetallePedido> listaDetalles = new ArrayList<>();
             for (CarritoItem item : listaItems) {
@@ -124,16 +124,13 @@ public class CarritoServlet extends HttpServlet {
                 detalle.setNombreProducto(item.getProducto().getNombre()); //
                 detalleDAO.create(detalle);
 
-                // Guardar en lista temporal
+
                 listaDetalles.add(detalle);
             }
 
-            // Guardar lista en sesión solo para mostrarla
             request.getSession().setAttribute("listaDetallePedidoSesion", listaDetalles);
-            // Vaciar el carrito
             request.getSession().removeAttribute("carrito");
 
-            // Redirigir a detalle pedido
             response.sendRedirect(request.getContextPath() + "/tienda/pedidos/" + pedido.getId_pedido());
             return;
         }

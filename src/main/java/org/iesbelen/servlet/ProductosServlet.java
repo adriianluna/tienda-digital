@@ -127,19 +127,27 @@ public class ProductosServlet extends HttpServlet {
         ProductoDAO productoDAO = new ProductoDAOImpl();
 
         try {
-            //Cambiar creo que solo hay q poner los metoso para el upodate puse de mas
+
             int id = Integer.parseInt(request.getParameter("id_producto"));
             Producto producto = new Producto();
             producto.setId_producto(id);
-           // producto.setId_producto(Integer.parseInt(request.getParameter("id_producto")));
+
             producto.setNombre(request.getParameter("nombre"));
             producto.setDescripcion(request.getParameter("descripcion"));
             producto.setPrecio(Double.parseDouble(request.getParameter("precio")));
             producto.setStock(Integer.parseInt(request.getParameter("stock")));
-            producto.setId_categoria(Integer.parseInt(request.getParameter("categoria")));
+            //producto.setId_categoria(Integer.parseInt(request.getParameter("categoria")));
             producto.setTalla(request.getParameter("talla"));
             producto.setColor((request.getParameter("color")));
-            producto.setImagen((request.getParameter("imagen")));
+            Producto existente = productoDAO.find(id).orElseThrow();
+
+            String nuevaImagen = request.getParameter("imagen");
+
+            if (nuevaImagen != null && !nuevaImagen.isBlank()) {
+                producto.setImagen(nuevaImagen);
+            } else {
+                producto.setImagen(existente.getImagen());
+            }
             productoDAO.update(producto);
 
         } catch (NumberFormatException nfe) {

@@ -35,11 +35,9 @@ public class UsuariosServlet extends HttpServlet {
             pathInfo = pathInfo.replaceAll("/$", "");
             String[] pathParts = pathInfo.split("/");
 
-            // RUTA PARA MOSTRAR LOGIN
             if (pathParts.length == 2 && "login".equals(pathParts[1])) {
                 dispatcher = request.getRequestDispatcher("/WEB-INF/jsp/usuarios/login.jsp");
 
-                // RUTA PARA LOGOUT
             } else if (pathParts.length == 2 && "logout".equals(pathParts[1])) {
                 request.getSession().invalidate();
                 response.sendRedirect(request.getContextPath() + "/tienda/usuarios/login");
@@ -84,26 +82,26 @@ public class UsuariosServlet extends HttpServlet {
         UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
         String pathInfo = request.getPathInfo();
 
-        // PROCESAR LOGIN
+
         if (pathInfo != null && pathInfo.equals("/login")) {
             String nombreUsuario = request.getParameter("usuario");
             String password = request.getParameter("password");
 
             try {
-                // Hashear la contraseña ingresada
+
                 String passwordHash = Utilidades.hashPassword(password);
 
-                // Buscar usuario por nombre y contraseña hasheada
+
                 java.util.Optional<Usuario> usuarioOpt = usuarioDAO.findPorNombreYPassword(nombreUsuario, passwordHash);
 
                 if (usuarioOpt.isPresent()) {
-                    // Login exitoso
+
                     Usuario usuario = usuarioOpt.get();
                     request.getSession().setAttribute("usuario-logado", usuario);
                     response.sendRedirect(request.getContextPath() + "/");
                     return;
                 } else {
-                    // Login fallido
+
                     request.setAttribute("error", "Usuario o contraseña incorrectos");
                     request.getRequestDispatcher("/WEB-INF/jsp/usuarios/login.jsp").forward(request, response);
                     return;
@@ -116,7 +114,7 @@ public class UsuariosServlet extends HttpServlet {
             }
         }
 
-        // RESTO DEL CÓDIGO (crear, editar, eliminar usuarios)
+
         if (__method__ == null) {
 
             Usuario nuevoUsuario = new Usuario();
@@ -130,14 +128,12 @@ public class UsuariosServlet extends HttpServlet {
                 throw new RuntimeException(e);
             }
 
-            // Si no viene rol o está vacío, asignar "cliente" por defecto
             String rol = request.getParameter("rol");
             if (rol == null || rol.trim().isEmpty()) {
                 rol = "cliente";
             }
             nuevoUsuario.setRol(rol);
 
-            // Crear usuario en la base de datos
             usuarioDAO.create(nuevoUsuario);
             System.out.println("pathInfo = " + pathInfo);
             System.out.println("nombre = " + request.getParameter("nombre"));
@@ -145,14 +141,12 @@ public class UsuariosServlet extends HttpServlet {
             Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuario-logado");
 
             if (usuarioLogueado == null) {
-                // No hay nadie logueado = registro público
-                // Loguear automáticamente al nuevo usuario
+
                 request.getSession().setAttribute("usuario-logado", nuevoUsuario);
                 response.sendRedirect(request.getContextPath() + "/");
                 return;
             } else {
-                // Hay un admin logueado creando el usuario
-                // Volver a la lista de usuarios
+
                 response.sendRedirect(request.getContextPath() + "/tienda/usuarios");
                 return;
             }
@@ -187,17 +181,10 @@ public class UsuariosServlet extends HttpServlet {
             // producto.setId_producto(Integer.parseInt(request.getParameter("id_producto")));
             usuario.setNombre(request.getParameter("nombre"));
             usuario.setEmail(request.getParameter("email"));
-           /* try {
-                String hash = Utilidades.hashPassword(request.getParameter("password"));
-                usuario.setPassword(hash);
-            } catch (NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
-            }*/
-            //usuario.setPassword(request.getParameter("password"));
 
             String nuevaPassword = request.getParameter("password");
             if (nuevaPassword != null && !nuevaPassword.isBlank()) {
-                // Compara con la contraseña existente
+
                 if (!nuevaPassword.equals(usuarioExistente.getPassword())) {
                     try {
                         usuario.setPassword(Utilidades.hashPassword(nuevaPassword));
@@ -205,11 +192,11 @@ public class UsuariosServlet extends HttpServlet {
                         throw new RuntimeException(e);
                     }
                 } else {
-                    // Si es la misma que ya estaba, no cambiamos
+
                     usuario.setPassword(usuarioExistente.getPassword());
                 }
             } else {
-                // Si no se escribe nada, dejamos la contraseña actual
+
                 usuario.setPassword(usuarioExistente.getPassword());
             }
             usuario.setRol(request.getParameter("rol"));

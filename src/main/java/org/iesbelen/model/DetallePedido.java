@@ -7,14 +7,13 @@ public class DetallePedido {
     private int cantidad;
     private double precio_unitario;
 
-    // Atributos extra para mostrar info (no están en BD)
+    // Atributos extra para mostrar info (no esta en BD)
     private String nombreProducto;
 
 
-    // Constructores
+
     public DetallePedido() {}
 
-    // Getters y Setters
     public int getId_detalle() { return id_detalle; }
     public void setId_detalle(int id_detalle) { this.id_detalle = id_detalle; }
 

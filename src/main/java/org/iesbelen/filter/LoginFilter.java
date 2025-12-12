@@ -23,13 +23,11 @@ public class LoginFilter implements Filter {
         String pathInfo = httpRequest.getPathInfo();
         Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuario-logado") : null;
 
-        // Rutas públicas: login, logout, crear usuario (registro)
         boolean isPublicRoute = pathInfo != null &&
                 (pathInfo.contains("/login") ||
                         pathInfo.contains("/logout") ||
                         pathInfo.contains("/crear"));
 
-        // Si es ruta pública O ya está logueado, dejar pasar
         if (isPublicRoute || usuario != null) {
             chain.doFilter(request, response);
         } else {
