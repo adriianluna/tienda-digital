@@ -78,6 +78,11 @@ public class UsuariosServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        System.out.println("========================================");
+        System.out.println("=== SERVLET doPost EJECUTADO ===");
+        System.out.println("PathInfo: " + request.getPathInfo());
+        System.out.println("========================================");
+
         String __method__ = request.getParameter("__method__");
         UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
         String pathInfo = request.getPathInfo();
@@ -88,20 +93,15 @@ public class UsuariosServlet extends HttpServlet {
             String password = request.getParameter("password");
 
             try {
-
                 String passwordHash = Utilidades.hashPassword(password);
-
-
                 java.util.Optional<Usuario> usuarioOpt = usuarioDAO.findPorNombreYPassword(nombreUsuario, passwordHash);
 
                 if (usuarioOpt.isPresent()) {
-
                     Usuario usuario = usuarioOpt.get();
                     request.getSession().setAttribute("usuario-logado", usuario);
                     response.sendRedirect(request.getContextPath() + "/");
                     return;
                 } else {
-
                     request.setAttribute("error", "Usuario o contraseña incorrectos");
                     request.getRequestDispatcher("/WEB-INF/jsp/usuarios/login.jsp").forward(request, response);
                     return;
@@ -115,7 +115,7 @@ public class UsuariosServlet extends HttpServlet {
         }
 
 
-        if (__method__ == null) {
+        if (pathInfo != null && pathInfo.equals("/crear")) {
 
             Usuario nuevoUsuario = new Usuario();
             nuevoUsuario.setNombre(request.getParameter("nombre"));
@@ -134,36 +134,40 @@ public class UsuariosServlet extends HttpServlet {
             }
             nuevoUsuario.setRol(rol);
 
+            System.out.println("Nombre: " + nuevoUsuario.getNombre());
+            System.out.println("Email: " + nuevoUsuario.getEmail());
+            System.out.println("Rol: " + nuevoUsuario.getRol());
+
             usuarioDAO.create(nuevoUsuario);
-            System.out.println("pathInfo = " + pathInfo);
-            System.out.println("nombre = " + request.getParameter("nombre"));
-            // NUEVA LÓGICA: Decidir a dónde redirigir
+            System.out.println("Usuario creado exitosamente");
+
             Usuario usuarioLogueado = (Usuario) request.getSession().getAttribute("usuario-logado");
 
             if (usuarioLogueado == null) {
-
+                // Usuario público se registra y se loguea automáticamente
                 request.getSession().setAttribute("usuario-logado", nuevoUsuario);
                 response.sendRedirect(request.getContextPath() + "/");
                 return;
             } else {
-
+                // Admin creando usuario, vuelve a la lista
                 response.sendRedirect(request.getContextPath() + "/tienda/usuarios");
                 return;
             }
-
-        } else if ("put".equalsIgnoreCase(__method__)) {
-            doPut(request, response);
-            return;
-
-        } else if ("delete".equalsIgnoreCase(__method__)) {
-            doDelete(request, response);
-            return;
-
-        } else {
-            System.out.println("Opción POST no soportada.");
         }
 
-        //response.sendRedirect(request.getContextPath() + "/tienda/usuarios");
+
+        if (__method__ != null) {
+            if ("put".equalsIgnoreCase(__method__)) {
+                doPut(request, response);
+                return;
+            } else if ("delete".equalsIgnoreCase(__method__)) {
+                doDelete(request, response);
+                return;
+            }
+        }
+
+        System.out.println("Opción POST no soportada.");
+        response.sendRedirect(request.getContextPath() + "/tienda/usuarios");
     }
 
     @Override
@@ -173,12 +177,11 @@ public class UsuariosServlet extends HttpServlet {
         UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
 
         try {
-            //Cambiar creo que solo hay q poner los metoso para el upodate puse de mas
+
             int id = Integer.parseInt(request.getParameter("id_usuario"));
             Usuario usuarioExistente = usuarioDAO.find(id).orElseThrow();
             Usuario usuario = new Usuario();
             usuario.setId_usuario(id);
-            // producto.setId_producto(Integer.parseInt(request.getParameter("id_producto")));
             usuario.setNombre(request.getParameter("nombre"));
             usuario.setEmail(request.getParameter("email"));
 

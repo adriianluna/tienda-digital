@@ -59,7 +59,6 @@ public class ProductoDAOImpl extends AbstractDAOImpl implements ProductoDAO{
         try {
             conn = connectDB();
 
-            // Se utiliza un objeto Statement dado que no hay parámetros en la consulta.
             s = conn.createStatement();
 
             rs = s.executeQuery("SELECT * FROM productos");

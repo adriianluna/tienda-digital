@@ -114,11 +114,7 @@
     </div>
 </div>
 
-
-
-
     <% 	} else { %>
-
     response.sendRedirect("productos/");
 
     <% 	} %>

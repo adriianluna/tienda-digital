@@ -44,7 +44,7 @@ public class PedidosServlet extends HttpServlet {
             String[] pathParts = pathInfo.split("/");
 
 
-            // /tienda/pedidos/{id}ver detalle
+            // /tienda/pedidos/{id} ver detalle
             if (pathParts.length == 2) {
                 try {
                     int idPedido = Integer.parseInt(pathParts[1]);
@@ -56,7 +56,7 @@ public class PedidosServlet extends HttpServlet {
                         listaDetalles = (List<DetallePedido>) request.getSession()
                                 .getAttribute("listaDetallePedidoSesion");
 
-                        //Si estan en la sesion es porue ya hemos hecho un checkout
+                        //Si estan en la sesion es porque ya hemos hecho un checkout
                         if (listaDetalles != null) {
                             request.getSession().removeAttribute("listaDetallePedidoSesion");
                         } else {
@@ -133,28 +133,6 @@ public class PedidosServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-   /* @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        String pathInfo = request.getPathInfo();
-        String[] pathParts = pathInfo.split("/");
-
-        if (pathParts.length == 3 && "editar".equals(pathParts[1])) {
-            int idPedido = Integer.parseInt(pathParts[2]);
-            String estado = request.getParameter("estado");
-
-            PedidosDAO pedidoDAO = new PedidosDAOImpl();
-            Pedido pedido = pedidoDAO.find(idPedido).orElse(null);
-
-            if (pedido != null) {
-                pedido.setEstado(estado);
-                pedidoDAO.update(pedido);
-            }
-
-            response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
-        }
-    }*/
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -197,8 +175,7 @@ public class PedidosServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/tienda/pedidos");
     }
     @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-    {
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response){
         RequestDispatcher dispatcher;
         PedidosDAO pedidosDAO = new PedidosDAOImpl();
         String codigo = request.getParameter("id_pedido");

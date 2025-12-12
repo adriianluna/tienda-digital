@@ -33,7 +33,6 @@
                     <p class="card-text">Talla: <%= prod.getTalla() %> </p>
                     <p class="card-text">Color: <%= prod.getColor() %> </p>
 
-                    <!-- Formulario para comprar -->
                     <form action="<%= request.getContextPath() %>/tienda/carrito/anadir" method="post">
                         <input type="hidden" name="idProducto" value="<%= prod.getId_producto() %>"/>
                         <input type="number" name="cantidad" value="1" min="1" class="form-control mb-2" style="width:80px;">

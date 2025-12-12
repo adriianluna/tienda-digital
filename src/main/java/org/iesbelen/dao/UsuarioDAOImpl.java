@@ -89,7 +89,6 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
             ps.setString(idx++, usuario.getPassword());
             ps.setString(idx++, usuario.getRol());
 
-            // Solo ejecutar UNA VEZ
             int rows = ps.executeUpdate();
 
             if (rows == 0) {
@@ -98,7 +97,6 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
                 System.out.println("Usuario creado correctamente. Filas insertadas: " + rows);
             }
 
-            // Obtener el ID generado
             rsGenKeys = ps.getGeneratedKeys();
             if (rsGenKeys.next()) {
                 usuario.setId_usuario(rsGenKeys.getInt(1));
@@ -147,10 +145,9 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
         } finally {
             closeDb(conn, ps, null);
         }
-
     }
 
-    //Para el futuro loin
+
     @Override
     public synchronized Optional<Usuario> findPorNombreYPassword(String nombre, String password) {
         Connection conn = null;
@@ -162,8 +159,6 @@ public class UsuarioDAOImpl extends AbstractDAOImpl implements UsuarioDAO{
             String sql = "SELECT * FROM usuarios WHERE nombre = ? AND password = ?";
             ps = conn.prepareStatement(sql);
 
-            //  guarda contraseña hasheada:
-            //String hash = Utilidades.hashPassword(password);
             ps.setString(1, nombre);
             ps.setString(2, password);
 

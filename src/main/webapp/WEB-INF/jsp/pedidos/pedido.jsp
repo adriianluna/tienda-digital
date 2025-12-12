@@ -47,21 +47,13 @@
             <td>€ <%= String.format("%.2f", pedido.getTotal()) %></td>
             <td>
                 <%Usuario usuarioLogado = (Usuario) session.getAttribute("usuario-logado");%>
-                <!-- Ver detalle (todos pueden verlo) -->
-               <%-- <a href="<%= request.getContextPath() %>/tienda/pedidos/<%= pedido.getId_pedido() %>"
-                   class="btn btn-sm btn-primary">Ver detalle</a>--%>
                 <form action="${pageContext.request.contextPath}/tienda/pedidos/<%= pedido.getId_pedido()%>" >
                     <button class="btn btn-sm btn-primary" type="submit" >Ver detalles</button>
                 </form>
                 <% if ("admin".equalsIgnoreCase(usuarioLogado.getRol())) { %>
-                <!-- Solo admins pueden editar o eliminar -->
-       <%--         <a href="<%= request.getContextPath() %>/tienda/pedidos/eliminar/<%= pedido.getId_pedido() %>"
-                   class="btn btn-sm btn-danger">Eliminar</a>--%>
                 <form action="${pageContext.request.contextPath}/tienda/pedidos/eliminar/<%= pedido.getId_pedido()%>" style="display: inline;">
                     <button class="btn btn-sm btn-danger" type="submit" >Eliminar</button>
                 </form>
-                <%--<a href="<%= request.getContextPath() %>/tienda/pedidos/editar/<%= pedido.getId_pedido() %>"
-                   class="btn btn-sm btn-warning">Editar</a>--%>
                 <form action="${pageContext.request.contextPath}/tienda/pedidos/editar/<%= pedido.getId_pedido()%>" >
                     <button class="btn btn-sm btn-warning" type="submit" >Editar</button>
                 </form>

@@ -16,7 +16,6 @@
 
             <h1 class="mb-4">Crear Usuario</h1>
 
-            <!-- Mostrar error si existe -->
             <% if (request.getAttribute("error") != null) { %>
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <%= request.getAttribute("error") %>
@@ -24,9 +23,9 @@
             </div>
             <% } %>
 
-            <form action="${pageContext.request.contextPath}/tienda/usuarios" method="post">
+            <form action="${pageContext.request.contextPath}/tienda/usuarios/crear" method="post">
 
-                <!-- Nombre de usuario -->
+
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre de usuario</label>
                     <input type="text"
@@ -37,7 +36,7 @@
                            required>
                 </div>
 
-                <!-- Email -->
+
                 <div class="mb-3">
                     <label for="email" class="form-label">Email</label>
                     <input type="email"
@@ -48,7 +47,7 @@
                            required>
                 </div>
 
-                <!-- Contraseña -->
+
                 <div class="mb-3">
                     <label for="password" class="form-label">Contraseña</label>
                     <input type="password"
@@ -60,10 +59,9 @@
                     <div class="form-text">Mínimo 4 caracteres</div>
                 </div>
 
-                <!-- Rol (solo visible para admins) -->
                 <%
                     Usuario usuarioLogado = (Usuario) session.getAttribute("usuario-logado");
-                     esAdmin = usuarioLogado != null && "administrador".equalsIgnoreCase(usuarioLogado.getRol());
+                     esAdmin = usuarioLogado != null && "admin".equalsIgnoreCase(usuarioLogado.getRol());
                 %>
 
                 <% if (esAdmin) { %>
@@ -71,20 +69,20 @@
                     <label for="rol" class="form-label">Rol</label>
                     <select name="rol" id="rol" class="form-select">
                         <option value="cliente">Cliente</option>
-                        <option value="administrador">Administrador</option>
+                        <option value="admin">Administrador</option>
                     </select>
                 </div>
                 <% } else { %>
-                <!-- Usuario público siempre será cliente -->
+
                 <input type="hidden" name="rol" value="cliente">
                 <% } %>
 
-                <!-- Botón Crear -->
+
                 <div class="d-grid mb-3">
                     <button type="submit" class="btn btn-success">Crear Usuario</button>
                 </div>
 
-                <!-- Link a login -->
+
                 <div class="text-center">
                     <p>¿Ya tienes cuenta?
                         <a href="${pageContext.request.contextPath}/tienda/usuarios/login">Inicia sesión aquí</a>
@@ -98,5 +96,6 @@
 </main>
 
 <%@ include file="/WEB-INF/jsp/fragmentos/footer.jspf"%>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -7,7 +7,6 @@ public class DetallePedido {
     private int cantidad;
     private double precio_unitario;
 
-    // Atributos extra para mostrar info (no esta en BD)
     private String nombreProducto;
 
 

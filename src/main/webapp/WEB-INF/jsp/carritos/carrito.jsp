@@ -73,7 +73,7 @@
     <div class="text-center mt-4">
         <a href="<%= request.getContextPath() %>/" class="btn btn-secondary">Seguir comprando</a>
         <% if (listaItems != null && !listaItems.isEmpty()) { %>
-        <!-- BOTÓN ACTUALIZADO PARA HACER CHECKOUT -->
+
         <form action="<%= request.getContextPath() %>/tienda/carrito/checkout" method="post" style="display: inline;">
             <button type="submit" class="btn btn-success">Finalizar compra</button>
         </form>

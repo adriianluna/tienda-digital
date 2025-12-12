@@ -45,7 +45,7 @@ public class ProductosServlet extends HttpServlet {
             String[] pathParts = pathInfo.split("/");
 
             if (pathParts.length == 2 && "crear".equals(pathParts[1])) {
-                //Para mostrar datos en el select de categorias al crear producto
+
                 CategoriasDAO catDAO = new CategoriasDAOImpl();
                 request.setAttribute("listaCategoria", catDAO.getAll());
 

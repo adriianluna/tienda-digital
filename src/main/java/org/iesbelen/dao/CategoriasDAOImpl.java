@@ -1,8 +1,6 @@
 package org.iesbelen.dao;
 
 import org.iesbelen.model.Categoria;
-import org.iesbelen.model.Producto;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

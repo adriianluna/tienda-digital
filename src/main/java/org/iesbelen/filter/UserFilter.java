@@ -26,7 +26,7 @@ public class UserFilter extends HttpFilter implements Filter {
 
     @Override
     public void destroy() {
-        // Cleanup si es necesario
+
     }
 
     @Override
@@ -45,9 +45,11 @@ public class UserFilter extends HttpFilter implements Filter {
                 ("/login".equals(pathInfo) ||
                         "/logout".equals(pathInfo) ||
                         "/crear".equals(pathInfo))) {
+
             chain.doFilter(request, response);
             return;
         }
+
 
         if (usuario == null) {
             httpResponse.sendRedirect(httpRequest.getContextPath() + "/tienda/usuarios/login");
@@ -66,7 +68,6 @@ public class UserFilter extends HttpFilter implements Filter {
 
         if ("cliente".equalsIgnoreCase(rol)) {
 
-            // cliente puede entrar solo a pedidos y detallePedidos
             boolean puedeEntrarCliente =
                     servletPath.startsWith("/tienda/pedidos") ||
                             servletPath.startsWith("/tienda/detalle-pedidos");

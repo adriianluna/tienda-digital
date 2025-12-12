@@ -26,7 +26,6 @@ public class PedidosDAOImpl extends AbstractDAOImpl implements PedidosDAO {
 
             ps.executeUpdate();
 
-            // Obtener el ID generado
             rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 pedido.setId_pedido(rs.getInt(1));

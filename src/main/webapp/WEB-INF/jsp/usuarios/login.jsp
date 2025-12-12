@@ -66,7 +66,6 @@
 <div class="login-container">
     <h2>Iniciar Sesión</h2>
 
-    <!-- Mostrar mensaje de error si existe -->
     <% if (request.getAttribute("error") != null) { %>
     <div class="error-message">
         <%= request.getAttribute("error") %>

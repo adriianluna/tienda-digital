@@ -16,31 +16,26 @@
     <h1 class="mb-4">Crear Producto</h1>
     <form action="${pageContext.request.contextPath}/tienda/productos/crear/" method="post" class="row g-3">
 
-        <!-- Nombre -->
         <div class="col-12">
             <label for="nombre" class="form-label">Nombre</label>
             <input type="text" class="form-control" name="nombre" id="nombre" required>
         </div>
 
-        <!-- Descripción -->
         <div class="col-12">
             <label for="descripcion" class="form-label">Descripción</label>
             <input type="text" class="form-control" name="descripcion" id="descripcion">
         </div>
 
-        <!-- Precio -->
         <div class="col-12">
             <label for="precio" class="form-label">Precio</label>
             <input type="number" class="form-control" name="precio" id="precio" min="0" step="0.01">
         </div>
 
-        <!-- Stock -->
         <div class="col-12">
             <label for="stock" class="form-label">Stock</label>
             <input type="number" class="form-control" name="stock" id="stock" min="0">
         </div>
 
-        <!-- Categoría -->
         <div class="col-12">
             <label for="categoria" class="form-label">Categoría</label>
             <select name="categoria" id="categoria" class="form-select">
@@ -58,7 +53,6 @@
             </select>
         </div>
 
-        <!-- Talla -->
         <div class="col-12">
             <label for="talla" class="form-label">Talla</label>
             <select name="talla" id="talla" class="form-select">
@@ -69,7 +63,6 @@
             </select>
         </div>
 
-        <!-- Color -->
         <div class="col-12">
             <label for="color" class="form-label">Color</label>
             <select name="color" id="color" class="form-select">
@@ -80,13 +73,11 @@
             </select>
         </div>
 
-        <!-- Imagen -->
         <div class="col-12">
             <label for="imagen" class="form-label">URL imagen</label>
             <input type="text" class="form-control" name="imagen" id="imagen">
         </div>
 
-        <!-- Botón Crear -->
         <div class="col-12">
             <button type="submit" class="btn btn-success">Crear Producto</button>
         </div>
